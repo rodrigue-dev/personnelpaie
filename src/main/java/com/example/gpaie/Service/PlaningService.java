@@ -28,6 +28,7 @@ public interface PlaningService {
      * @return the list of entities.
      */
     List<PlaningModel> findAll();
+    List<PlaningModel> getPlaningWeek(String localdate);
 
     /**
      * Get the "id" zone.

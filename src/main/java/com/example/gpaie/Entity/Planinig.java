@@ -8,7 +8,9 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.ManyToOne;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.LocalTime;
 @Entity
 public class Planinig {
     @Id
@@ -18,6 +20,7 @@ public class Planinig {
     private LocalDateTime createdAt;
     @LastModifiedDate
     private LocalDateTime modifiedAt;
+    private LocalDate datePlaning;
     @ManyToOne
     private TypePlaining typePlaining;
     @ManyToOne
@@ -26,9 +29,44 @@ public class Planinig {
     private User user;
     private LocalDateTime dateDebut;
     private LocalDateTime dateFin;
+    private LocalTime heureDebut;
+    private LocalTime heureFin;
+    private String isPointe;
 
     public Long getId() {
         return this.id;
+    }
+
+    public LocalDate getDatePlaning() {
+        return this.datePlaning;
+    }
+
+    public void setDatePlaning(LocalDate datePlaning) {
+        this.datePlaning = datePlaning;
+    }
+
+    public LocalTime getHeureDebut() {
+        return this.heureDebut;
+    }
+
+    public void setHeureDebut(LocalTime heureDebut) {
+        this.heureDebut = heureDebut;
+    }
+
+    public LocalTime getHeureFin() {
+        return this.heureFin;
+    }
+
+    public void setHeureFin(LocalTime heureFin) {
+        this.heureFin = heureFin;
+    }
+
+    public String getIsPointe() {
+        return this.isPointe;
+    }
+
+    public void setIsPointe(String isPointe) {
+        this.isPointe = isPointe;
     }
 
     public void setId(Long id) {

@@ -3,6 +3,7 @@ package com.example.gpaie.Security;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
@@ -47,6 +48,7 @@ public class SecurityConfig {
           .authorizeHttpRequests()
           .requestMatchers("/auth/**")
             .permitAll()
+          .requestMatchers(HttpMethod.OPTIONS,"/v1/**").permitAll()
           .anyRequest()
             .authenticated()
           .and()

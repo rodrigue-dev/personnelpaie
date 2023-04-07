@@ -20,6 +20,9 @@ public class UserModel implements Serializable{
     private long departement_id;
     private String departement;
 
+    public UserModel() {
+    }
+
     public UserModel(User user) {
         this.id = user.getId();
         this.firstname=user.getPrenom();

@@ -12,17 +12,24 @@ import com.example.gpaie.Service.UserServiceInterface;
 
 @RestController
 @RequestMapping("/v1")
+@CrossOrigin(origins = "*")
 public class UserController {
     @Autowired
     private UserServiceInterface userServiceInterface;
 
     @GetMapping({ "/users" })
 	public List<UserModel> findAll() {
+    
 		return userServiceInterface.findAll();
 	}
     @GetMapping("/users/{id}")
     public ResponseEntity<UserModel> getById(@PathVariable("id") Long id) {
         Optional<UserModel> existingItemOptional = userServiceInterface.findOne(id);
+        return existingItemOptional.map(sms -> new ResponseEntity<>(sms, HttpStatus.OK)).orElseGet(() -> new ResponseEntity<>(HttpStatus.NOT_FOUND));
+    }
+    @GetMapping("/users/byemail/{email}")
+    public ResponseEntity<UserModel> getByEmail(@PathVariable("email") String email) {
+        Optional<UserModel> existingItemOptional = userServiceInterface.findByEmail(email);
         return existingItemOptional.map(sms -> new ResponseEntity<>(sms, HttpStatus.OK)).orElseGet(() -> new ResponseEntity<>(HttpStatus.NOT_FOUND));
     }
 

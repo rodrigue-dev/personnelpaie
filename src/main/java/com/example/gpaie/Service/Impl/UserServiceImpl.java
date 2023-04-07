@@ -1,8 +1,10 @@
 package com.example.gpaie.Service.Impl;
 
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.Random;
 import java.util.stream.Collectors;
 
 import org.slf4j.Logger;
@@ -14,14 +16,20 @@ import org.springframework.stereotype.Service;
 import com.example.gpaie.Entity.User;
 import com.example.gpaie.Model.UserModel;
 import com.example.gpaie.Repository.DepartementRepository;
+import com.example.gpaie.Repository.RoleRepository;
 import com.example.gpaie.Repository.UserRepository;
 import com.example.gpaie.Service.UserServiceInterface;
+import com.example.gpaie.Utils.DateUtil;
+
+import io.micrometer.common.util.StringUtils;
 @Service
 public class UserServiceImpl implements UserServiceInterface{
 
     private final Logger log = LoggerFactory.getLogger(UserServiceImpl.class);
     @Autowired
     private  UserRepository userRepository;
+    @Autowired
+    private  RoleRepository roleRepository;
     @Autowired
     private  DepartementRepository departementRepository;
     @Autowired
@@ -39,14 +47,20 @@ public class UserServiceImpl implements UserServiceInterface{
         user.setEmail(userRequest.getEmail());
         user.setEtatCivil(userRequest.getEtatCivil());
         user.setGenre(userRequest.getGenre());
-        user.setMatricule(userRequest.getMatricule());
+        user.setMatricule(generateMatricule());
         user.setNom(userRequest.getLastname());
         user.setPrenom(userRequest.getFirstname());
         user.setTelephone(userRequest.getPhone());
         user.setUsername(userRequest.getUsername());
+        user.setAuthority(roleRepository.findById(userRequest.getRole()).get());
         user.setDepartement(departementRepository.findById(userRequest.getDepartement_id()).get());
         userRepository.saveAndFlush(user);
         return userRequest;
+    }
+    private String generateMatricule(){
+        int random=new Random().nextInt(8);
+        String matricule = "GE_" + random;
+        return matricule;
     }
 
     @Override
@@ -57,6 +71,8 @@ public class UserServiceImpl implements UserServiceInterface{
 
     @Override
     public List<UserModel> findAll() {
+       
+       // DateUtil.getWeekFromDate(LocalDate.now()).forEach(System.out::println);;
         return userRepository.findAll().stream().filter(Objects::nonNull).map(this::userToUserModel).collect(Collectors.toList());  
    }
 
@@ -85,9 +101,15 @@ public class UserServiceImpl implements UserServiceInterface{
             user.setTelephone(userDTO.getPhone());
             user.setCompteIban(userDTO.getCompteIban());
             user.setGenre(userDTO.getGenre());
-            user.setAuthority(null);
+            user.setAuthority(roleRepository.findById(userDTO.getRole()).get());
             return user;
         }
+    }
+
+    @Override
+    public Optional<UserModel> findByEmail(String email) {
+        System.out.println(email);
+       return userRepository.findByEmail(email).map(this::userToUserModel);
     }
    
     

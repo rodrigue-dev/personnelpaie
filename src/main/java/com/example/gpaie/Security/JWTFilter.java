@@ -29,7 +29,7 @@ public class JWTFilter  extends OncePerRequestFilter {
                                     HttpServletResponse response,
                                     FilterChain filterChain) throws ServletException, IOException {
         String authHeader = request.getHeader("Authorization");
-        System.out.println("test");
+        System.out.println(authHeader);
         if(authHeader != null && !authHeader.isBlank() && authHeader.startsWith("Bearer ")){
             String jwt = authHeader.substring(7);
             if(jwt.isBlank()){
@@ -37,7 +37,7 @@ public class JWTFilter  extends OncePerRequestFilter {
             }else {
                 try{
                     String email = jwtUtil.validateTokenAndRetrieveSubject(jwt);
-                    //System.out.print(email);
+                 //   System.out.print(email);
                     UserDetails userDetails = userDetailsService.loadUserByUsername(email);
                     UsernamePasswordAuthenticationToken authToken =
                             new UsernamePasswordAuthenticationToken(email, userDetails.getPassword(), userDetails.getAuthorities());

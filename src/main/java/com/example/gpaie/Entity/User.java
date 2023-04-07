@@ -29,7 +29,6 @@ public class User {
     private String email;
     @Column(name = "lang_key", length = 10)
     private String langKey;
-
     @Column(name = "image_url", length = 256)
     private String imageUrl;
     private boolean activated = false;

@@ -46,4 +46,5 @@ public interface UserServiceInterface {
      * @param id the id of the entity.
      */
     void delete(Long id);
+    Optional<UserModel> findByEmail(String email);
 }
