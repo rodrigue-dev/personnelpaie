@@ -28,6 +28,8 @@ public interface FichePresenceService {
      * @return the list of entities.
      */
     List<FichePresenceModel> findAll();
+    List<FichePresenceModel> findAllByDate(String datePresence);
+    List<FichePresenceModel> findByEmployeBetwennDate(Long user_id,String dateDebut,String datefin);
 
     /**
      * Get the "id" zone.

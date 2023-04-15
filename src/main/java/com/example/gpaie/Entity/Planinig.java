@@ -27,8 +27,8 @@ public class Planinig {
     private Fonction fonction;
     @ManyToOne
     private User user;
-    private LocalDateTime dateDebut;
-    private LocalDateTime dateFin;
+    private LocalDate dateDebut;
+    private LocalDate dateFin;
     private LocalTime heureDebut;
     private LocalTime heureFin;
     private String isPointe;
@@ -113,19 +113,19 @@ public class Planinig {
         this.user = user;
     }
 
-    public LocalDateTime getDateDebut() {
+    public LocalDate getDateDebut() {
         return this.dateDebut;
     }
 
-    public void setDateDebut(LocalDateTime dateDebut) {
+    public void setDateDebut(LocalDate dateDebut) {
         this.dateDebut = dateDebut;
     }
 
-    public LocalDateTime getDateFin() {
+    public LocalDate getDateFin() {
         return this.dateFin;
     }
 
-    public void setDateFin(LocalDateTime dateFin) {
+    public void setDateFin(LocalDate dateFin) {
         this.dateFin = dateFin;
     }
 

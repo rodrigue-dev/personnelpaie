@@ -26,6 +26,10 @@ public class FonctionController {
 	public List<FontionModel> findAll() {
 		return fonctionService.findAll();
 	}
+    @GetMapping({ "/fonctions/departement/{id}" })
+	public List<FontionModel> findAllByDepartement(@PathVariable("id") Long id) {
+		return fonctionService.findAllByDepartement(id);
+	}
     @GetMapping("/fonctions/{id}")
     public ResponseEntity<FontionModel> getById(@PathVariable("id") Long id) {
         Optional<FontionModel> existingItemOptional = fonctionService.findOne(id);

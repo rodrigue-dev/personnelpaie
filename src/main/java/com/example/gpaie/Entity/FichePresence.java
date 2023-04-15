@@ -6,6 +6,9 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.ManyToOne;
+
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 @Entity
@@ -17,15 +20,33 @@ public class FichePresence {
     private LocalDateTime createdAt;
     @LastModifiedDate
     private LocalDateTime modifiedAt;
+    private LocalDate datePresence;
     private LocalTime heureDebut;
     private LocalTime heureFin;
-
+    @ManyToOne
+    private User user;
     public Long getId() {
         return this.id;
     }
 
     public void setId(Long id) {
         this.id = id;
+    }
+
+    public User getUser() {
+        return this.user;
+    }
+
+    public void setUser(User user) {
+        this.user = user;
+    }
+
+    public LocalDate getDatePresence() {
+        return this.datePresence;
+    }
+
+    public void setDatePresence(LocalDate datePresence) {
+        this.datePresence = datePresence;
     }
 
     public LocalTime getHeureFin() {

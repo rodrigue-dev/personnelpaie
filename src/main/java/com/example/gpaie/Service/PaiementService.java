@@ -13,6 +13,11 @@ public interface PaiementService {
      * @return the persisted entity.
      */
     PaiementModel save(PaiementModel userRequest);
+    List<PaiementModel> calculSalaire(int month,int year);
+    List<PaiementModel> calculHeureSupp(int month,int year);
+    List<PaiementModel> calculPrimeRetenue(int month,int year);
+    List<PaiementModel> sendMail(int month,int year);
+    List<PaiementModel> generatePaie(int month,int year);
 
     /**
      * Partially updates a zone.

@@ -33,6 +33,7 @@ public interface FonctionService {
      * @return the list of entities.
      */
     List<FontionModel> findAll();
+    List<FontionModel> findAllByDepartement(long departement_id);
 
     /**
      * Get the "id" zone.

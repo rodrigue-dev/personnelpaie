@@ -6,6 +6,7 @@ import java.util.Optional;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
+import com.example.gpaie.Model.JwtRequest;
 import com.example.gpaie.Model.UserModel;
 
 public interface UserServiceInterface {
@@ -16,7 +17,7 @@ public interface UserServiceInterface {
      * @return the persisted entity.
      */
     UserModel save(UserModel userRequest);
-
+    void changePassword(String oldpass,String newpass,long id);
     /**
      * Partially updates a zone.
      *

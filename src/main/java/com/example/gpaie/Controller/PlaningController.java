@@ -1,9 +1,13 @@
 package com.example.gpaie.Controller;
 
+import java.net.URI;
+import java.net.URISyntaxException;
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -13,20 +17,39 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.example.gpaie.Model.Makeplaning;
 import com.example.gpaie.Model.PlaningModel;
+import com.example.gpaie.Model.PlaningUserModel;
 import com.example.gpaie.Model.TypePlaningModel;
 import com.example.gpaie.Service.PlaningService;
 import com.example.gpaie.Service.TypeplaningService;
 @RestController
 @RequestMapping("/v1")
 public class PlaningController {
+    private static final String ENTITY_NAME = "planing";
     @Autowired
     private PlaningService planingService;
     @Autowired
     private TypeplaningService typeplaningService;
+
     @GetMapping({ "/planings" })
 	public List<PlaningModel> findAll() {
 		return planingService.findAll();
+	}
+    @GetMapping("/planings/byuser/{user_id}/{date_jour}")
+	public List<Makeplaning> getModelByUser(@PathVariable("user_id") Long user_id,@PathVariable("date_jour") String dateString) {
+        
+		return planingService.getPlaningByUser(user_id,dateString);
+	}
+    @GetMapping("/planings/models/{date_jour}")
+	public List<PlaningUserModel> getModels(@PathVariable("date_jour") String dateString) {
+        
+		return planingService.getPlaningWeek(dateString);
+	}
+    @GetMapping("/planings/headers/{date_jour}")
+	public List<LocalDate> getPlaningHeaderWeek(@PathVariable("date_jour") String dateString) {
+    
+		return planingService.getPlaningHeaderWeek(dateString);
 	}
     @GetMapping("/planings/{id}")
     public ResponseEntity<PlaningModel> getById(@PathVariable("id") Long id) {
@@ -35,16 +58,20 @@ public class PlaningController {
     }
 
     @PostMapping("/planings")
-    public ResponseEntity<PlaningModel> createUser(@RequestBody PlaningModel planingModel){
+    public ResponseEntity<?> createPlaning(@RequestBody PlaningModel planingModel){
     
-         try {
+        try {
             PlaningModel newplaningModel = planingService.save(planingModel);
             return new ResponseEntity<>(newplaningModel, HttpStatus.CREATED);
         } catch (Exception e) {
             System.out.println(e.getMessage());
             //log.debug("Created Information for User: {}", e.getMessage());
-            return new ResponseEntity<>(null, HttpStatus.EXPECTATION_FAILED);
-        } 
+            HttpHeaders responseHeaders = new HttpHeaders();
+            //responseHeaders.setLocation(location);
+            responseHeaders.set("MyResponseHeader", "MyValue");
+            return new ResponseEntity<>(e,responseHeaders,HttpStatus.INTERNAL_SERVER_ERROR);
+        }  
+
     }
     @GetMapping({ "/typeplanings" })
 	public List<TypePlaningModel> findAllType() {

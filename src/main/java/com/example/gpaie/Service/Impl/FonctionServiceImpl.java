@@ -39,16 +39,6 @@ public class FonctionServiceImpl implements FonctionService{
         fonction.setHeureTravaille(fontionModel.getHeureTravaille());
         fonction.setSalaireSuppl(fontionModel.getSalaireSuppl());
         fonction.setTypeFonction(fontionModel.getTypeFonction());
-      /*   fontionModel.getAvantages().forEach(e->{
-            fonction.getAvantages().add(avantageRepository.findById(e).get());
-        });
-        fontionModel.getDepartements().forEach(e->{
-            fonction.getDepartements().add(departementRepository.findById(e).get());
-        }); */
-      /*   Set<Avantage>fonctions=fontionModel.getAvantages().stream().map(e->avantageRepository.findById(e).get()).collect(Collectors.toSet());
-        Set<Departement>departs=fontionModel.getDepartements().stream().map(e->departementRepository.findById(e).get()).collect(Collectors.toSet());
-        fonction.setAvantages(fonctions);
-        fonction.setDepartements(departs); */
         fonctionRepository.saveAndFlush(fonction);
         return fontionModel;
     }
@@ -104,5 +94,10 @@ public class FonctionServiceImpl implements FonctionService{
        fonction.getDepartements().removeAll(departements);
        fonctionRepository.saveAndFlush(fonction);
         return new FontionModel(fonction);
+    }
+    @Override
+    public List<FontionModel> findAllByDepartement(long departement_id) {
+        Departement departement=departementRepository.findById(departement_id).get();
+        return fonctionRepository.findAll().stream().filter(e->e.getDepartements().contains(departement)).map(e->fonctionToFonctionModel(e)).collect(Collectors.toList());
     }
 }

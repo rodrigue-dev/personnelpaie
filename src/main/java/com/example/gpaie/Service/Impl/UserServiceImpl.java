@@ -1,6 +1,8 @@
 package com.example.gpaie.Service.Impl;
 
 import java.time.LocalDate;
+import java.time.LocalTime;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
@@ -10,10 +12,12 @@ import java.util.stream.Collectors;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import com.example.gpaie.Entity.User;
+import com.example.gpaie.Model.JwtRequest;
 import com.example.gpaie.Model.UserModel;
 import com.example.gpaie.Repository.DepartementRepository;
 import com.example.gpaie.Repository.RoleRepository;
@@ -71,7 +75,8 @@ public class UserServiceImpl implements UserServiceInterface{
 
     @Override
     public List<UserModel> findAll() {
-       
+        DateTimeFormatter timeFormatter= DateTimeFormatter.ofPattern("HH:mm");
+        System.out.println(LocalTime.parse("12:30",timeFormatter));
        // DateUtil.getWeekFromDate(LocalDate.now()).forEach(System.out::println);;
         return userRepository.findAll().stream().filter(Objects::nonNull).map(this::userToUserModel).collect(Collectors.toList());  
    }
@@ -110,6 +115,17 @@ public class UserServiceImpl implements UserServiceInterface{
     public Optional<UserModel> findByEmail(String email) {
         System.out.println(email);
        return userRepository.findByEmail(email).map(this::userToUserModel);
+    }
+
+    @Override
+    public void changePassword(String oldpass, String newpass, long id) {
+        var user =userRepository.findById(id);
+        if(user.isEmpty())
+        throw new UsernameNotFoundException("Could not findUser with id = " + id);
+        String oldencript=passwordEncoder.encode(oldpass);
+
+        user.get().setPassword(passwordEncoder.encode(newpass));
+        userRepository.flush();
     }
    
     

@@ -1,9 +1,12 @@
 package com.example.gpaie.Service;
 
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 
+import com.example.gpaie.Model.Makeplaning;
 import com.example.gpaie.Model.PlaningModel;
+import com.example.gpaie.Model.PlaningUserModel;
 
 public interface PlaningService {
           /**
@@ -28,7 +31,10 @@ public interface PlaningService {
      * @return the list of entities.
      */
     List<PlaningModel> findAll();
-    List<PlaningModel> getPlaningWeek(String localdate);
+    List<PlaningUserModel> getPlaningWeek(String localdate);
+    List<LocalDate> getPlaningHeaderWeek(String localdate);
+    List<PlaningModel> getPlaningByUserBetwennDate(Long user_id,String datedebut,String datefin);
+    List<Makeplaning> getPlaningByUser(Long user_id,String localdate);
 
     /**
      * Get the "id" zone.

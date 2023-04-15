@@ -12,14 +12,18 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.example.gpaie.Entity.Departement;
+import com.example.gpaie.Entity.Fonction;
 import com.example.gpaie.Model.DepartementModel;
 import com.example.gpaie.Repository.DepartementRepository;
+import com.example.gpaie.Repository.FonctionRepository;
 import com.example.gpaie.Service.DepartementService;
 @Service
 public class DepartementServiceImpl implements DepartementService{
     private final Logger log = LoggerFactory.getLogger(UserServiceImpl.class);
     @Autowired
     private DepartementRepository departementRepository;
+    @Autowired
+    private FonctionRepository fonctionRepository;
     @Override
     public DepartementModel save(DepartementModel departementModel) {
         Departement departement;
@@ -51,5 +55,11 @@ public class DepartementServiceImpl implements DepartementService{
     }
     public DepartementModel departementToDepartementModel(Departement departement) {
         return new DepartementModel(departement);
+    }
+    @Override
+    public List<DepartementModel> findAllByFonction(long fonction_id) {
+        Fonction fonction=fonctionRepository.findById(fonction_id).get();
+      return  fonction.getDepartements().stream().map(this::departementToDepartementModel).collect(Collectors.toList());
+
     }
 }

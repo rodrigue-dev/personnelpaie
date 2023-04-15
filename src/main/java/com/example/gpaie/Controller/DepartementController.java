@@ -31,6 +31,10 @@ public class DepartementController {
         Optional<DepartementModel> existingItemOptional = departementService.findOne(id);
         return existingItemOptional.map(sms -> new ResponseEntity<>(sms, HttpStatus.OK)).orElseGet(() -> new ResponseEntity<>(HttpStatus.NOT_FOUND));
     }
+    @GetMapping("/departements/fonction/{id}")
+    public List<DepartementModel> getDepartementByFonction(@PathVariable("id") Long id) {
+        return departementService.findAllByFonction(id);
+    }
 
     @PostMapping("/departements")
     public ResponseEntity<DepartementModel> createDepartement(@RequestBody DepartementModel departementModel){

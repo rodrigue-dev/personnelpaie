@@ -13,8 +13,10 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.JoinTable;
 import jakarta.persistence.ManyToMany;
+import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToOne;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 @Entity
@@ -26,15 +28,27 @@ public class HeureSupplementaire {
     private LocalDateTime createdAt;
     @LastModifiedDate
     private LocalDateTime modifiedAt;
+    private LocalDate dateHeureSuppl;
     private LocalTime heureDebut;
     private LocalTime heureFin;
-
+    @ManyToOne
+    private User user;
+    @ManyToOne
+    private User createby;
     public Long getId() {
         return this.id;
     }
 
     public void setId(Long id) {
         this.id = id;
+    }
+
+    public LocalDate getDateHeureSuppl() {
+        return this.dateHeureSuppl;
+    }
+
+    public void setDateHeureSuppl(LocalDate dateHeureSuppl) {
+        this.dateHeureSuppl = dateHeureSuppl;
     }
 
     public LocalDateTime getCreatedAt() {
@@ -67,6 +81,22 @@ public class HeureSupplementaire {
 
     public void setHeureFin(LocalTime heureFin) {
         this.heureFin = heureFin;
+    }
+
+    public User getUser() {
+        return this.user;
+    }
+
+    public void setUser(User user) {
+        this.user = user;
+    }
+
+    public User getCreateby() {
+        return this.createby;
+    }
+
+    public void setCreateby(User createby) {
+        this.createby = createby;
     }
 
 }
