@@ -63,4 +63,10 @@ public class UserController {
             return new ResponseEntity<>(null, HttpStatus.EXPECTATION_FAILED);
         } 
     }
+    @DeleteMapping("/users/{id}")
+    public ResponseEntity<?> delete(@PathVariable("id") Long id) {
+        userServiceInterface.delete(id);
+    return   new ResponseEntity<>(null, HttpStatus.OK);
+       
+    }
 }

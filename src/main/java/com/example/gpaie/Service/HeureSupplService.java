@@ -5,7 +5,7 @@ import java.util.Optional;
 
 import com.example.gpaie.Model.HeureSupplModel;
 
-public interface heureSupplService {
+public interface HeureSupplService {
          /**
      * Save a avantage.
      *
@@ -36,4 +36,10 @@ public interface heureSupplService {
      * @return the entity.
      */
     Optional<HeureSupplModel> findOne(Long id);
+        /**
+     * Delete the "id" zone.
+     *
+     * @param id the id of the entity.
+     */
+    void delete(Long id);
 }

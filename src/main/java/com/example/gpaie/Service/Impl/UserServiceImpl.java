@@ -16,12 +16,15 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import com.example.gpaie.Entity.Role;
 import com.example.gpaie.Entity.User;
+import com.example.gpaie.Model.EmailDetails;
 import com.example.gpaie.Model.JwtRequest;
 import com.example.gpaie.Model.UserModel;
 import com.example.gpaie.Repository.DepartementRepository;
 import com.example.gpaie.Repository.RoleRepository;
 import com.example.gpaie.Repository.UserRepository;
+import com.example.gpaie.Service.MailService;
 import com.example.gpaie.Service.UserServiceInterface;
 import com.example.gpaie.Utils.DateUtil;
 
@@ -38,14 +41,19 @@ public class UserServiceImpl implements UserServiceInterface{
     private  DepartementRepository departementRepository;
     @Autowired
     private  PasswordEncoder passwordEncoder;
+    @Autowired
+    private  MailService mailService;
     @Override
     public UserModel save(UserModel userRequest) {
         User user;
+        boolean sendMail=false;
         if(userRequest.getId()== null){
             user=new User();  
             user.setPassword(passwordEncoder.encode(userRequest.getPassword()));
+            sendMail=true;
         }else{
              user =userRepository.findById(userRequest.getId()).get();
+             sendMail=false;
         }
         user.setCompteIban(userRequest.getCompteIban());
         user.setEmail(userRequest.getEmail());
@@ -59,6 +67,13 @@ public class UserServiceImpl implements UserServiceInterface{
         user.setAuthority(roleRepository.findById(userRequest.getRole()).get());
         user.setDepartement(departementRepository.findById(userRequest.getDepartement_id()).get());
         userRepository.saveAndFlush(user);
+        if(sendMail){
+            EmailDetails emailDetails=new EmailDetails();
+            emailDetails.setRecipient(user.getEmail());
+            emailDetails.setSubject("Creation du personnel");
+            emailDetails.setMsgBody("Informations de connexion: Eamil:"+user.getEmail()+" Password: "+userRequest.getPassword());
+            mailService.sendMail(emailDetails);
+        }
         return userRequest;
     }
     private String generateMatricule(){
@@ -75,10 +90,9 @@ public class UserServiceImpl implements UserServiceInterface{
 
     @Override
     public List<UserModel> findAll() {
-        DateTimeFormatter timeFormatter= DateTimeFormatter.ofPattern("HH:mm");
-        System.out.println(LocalTime.parse("12:30",timeFormatter));
-       // DateUtil.getWeekFromDate(LocalDate.now()).forEach(System.out::println);;
-        return userRepository.findAll().stream().filter(Objects::nonNull).map(this::userToUserModel).collect(Collectors.toList());  
+        return userRepository.findAll().stream()
+        .filter(Objects::nonNull).filter(e->e.getAuthority().getAuthority().equals(Role.ROLE_USER))
+        .map(this::userToUserModel).collect(Collectors.toList());  
    }
 
     @Override

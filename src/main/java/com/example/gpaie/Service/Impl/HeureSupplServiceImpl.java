@@ -17,9 +17,9 @@ import com.example.gpaie.Entity.HeureSupplementaire;
 import com.example.gpaie.Model.HeureSupplModel;
 import com.example.gpaie.Repository.HeureSupplRepository;
 import com.example.gpaie.Repository.UserRepository;
-import com.example.gpaie.Service.heureSupplService;
+import com.example.gpaie.Service.HeureSupplService;
 @Service
-public class HeureSupplServiceImpl implements heureSupplService{
+public class HeureSupplServiceImpl implements HeureSupplService{
     private final Logger log = LoggerFactory.getLogger(UserServiceImpl.class);
     @Autowired
     private HeureSupplRepository heureSupplRepository;
@@ -58,6 +58,10 @@ public class HeureSupplServiceImpl implements heureSupplService{
     }
     public HeureSupplModel heureSupplToHeureSupplModel(HeureSupplementaire hSupplementaire) {
         return new HeureSupplModel(hSupplementaire);
+    }
+    @Override
+    public void delete(Long id) {
+        heureSupplRepository.deleteById(id);
     }
 
 }
