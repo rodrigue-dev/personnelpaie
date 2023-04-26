@@ -48,4 +48,6 @@ public interface UserServiceInterface {
      */
     void delete(Long id);
     Optional<UserModel> findByEmail(String email);
+   
+    String resetpassword(String email);
 }

@@ -26,20 +26,14 @@ public class JwtUserDetailsService  implements UserDetailsService {
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        Optional<User> userRes = userRepo.findByUsername(username);
+        Optional<User> userRes = userRepo.findByEmail(username);
         if(userRes.isEmpty())
             throw new UsernameNotFoundException("Could not findUser with email = " + username);
         User user1 = userRes.get();
-    /*    String lowercaseLogin = username.toLowerCase(Locale.ENGLISH);
-       return userRepo
-                .findByEmail(lowercaseLogin)
-                .map(user -> createSpringSecurityUser(lowercaseLogin, user))
-                .orElseThrow(() -> new UsernameNotFoundException("User " + lowercaseLogin + " was not found in the database"));
-      */
+        List<GrantedAuthority> grantedAuthorities = new ArrayList<>();
+        grantedAuthorities.add(new SimpleGrantedAuthority(user1.getAuthority().getAuthority()));
        return new org.springframework.security.core.userdetails.User(
-        username,
-                user1.getPassword(),
-                Collections.singletonList(new SimpleGrantedAuthority("ROLE_USER")));
+        username, user1.getPassword(), grantedAuthorities);
     }
     private org.springframework.security.core.userdetails.User createSpringSecurityUser(String lowercaseLogin, User user) {
         if (!user.isActivated()) {
