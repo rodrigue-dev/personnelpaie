@@ -29,6 +29,7 @@ public interface FichePresenceService {
      */
     List<FichePresenceModel> findAll();
     List<FichePresenceModel> findAllByDate(String datePresence);
+    List<FichePresenceModel> findByEmploye(Long user_id);
     List<FichePresenceModel> findByEmployeBetwennDate(Long user_id,String dateDebut,String datefin);
 
     /**

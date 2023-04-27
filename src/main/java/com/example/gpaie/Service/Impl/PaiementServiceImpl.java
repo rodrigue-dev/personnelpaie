@@ -135,14 +135,13 @@ public class PaiementServiceImpl implements PaiementService {
     }
 
     @Override
-    public List<PaiementModel> calculSalaire(int month, int year) {
+    public List<PaiementModel> calculSalaire(int month, int year,Long id_user) {
         DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
         var date_debut = LocalDate.of(year, month, 01);
         var date_fin = LocalDate.of(year, month, YearMonth.of(year, month).atEndOfMonth().getDayOfMonth());
-
-        // var date_fin=LocalDate.of(YearMonth.of(month,
-        // year).atEndOfMonth().getDayOfMonth(), month,year );
-        var employes = userRepository.findAll();
+        var employes = userRepository.findAll().stream().filter(e->e.isEnabled())
+        .filter(f->f.getId() !=id_user)
+        .collect(Collectors.toList());
         List<PaiementModel> paiementModels = new ArrayList<>();
         for (User user : employes) {
             var paie = paiementRepository.findOneByMonthAndYearAndUser(month, year, user);
@@ -256,11 +255,13 @@ public class PaiementServiceImpl implements PaiementService {
     }
 
     @Override
-    public List<PaiementModel> calculHeureSupp(int month, int year) {
+    public List<PaiementModel> calculHeureSupp(int month, int year,Long id_user) {
         DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
         var date_debut = LocalDate.of(year, month, 01);
         var date_fin = LocalDate.of(year, month, YearMonth.of(year, month).atEndOfMonth().getDayOfMonth());
-        var employes = userRepository.findAll();
+        var employes = userRepository.findAll().stream().filter(e->e.isEnabled())
+        .filter(f->f.getId() !=id_user)
+        .collect(Collectors.toList());
         List<PaiementModel> paiementModels = new ArrayList<>();
         for (User user : employes) {
             var paie = paiementRepository.findOneByMonthAndYearAndUser(month, year, user);
@@ -276,7 +277,7 @@ public class PaiementServiceImpl implements PaiementService {
     }
 
     @Override
-    public List<PaiementModel> calculPrimeRetenue(int month, int year) {
+    public List<PaiementModel> calculPrimeRetenue(int month, int year,Long id_user) {
         // TODO Auto-generated method stub
         throw new UnsupportedOperationException("Unimplemented method 'calculPrimeRetenue'");
     }
@@ -472,7 +473,7 @@ public class PaiementServiceImpl implements PaiementService {
 
     @Override
     public List<PaiementModel> sendMail(int month, int year) {
-        var employes = userRepository.findAll();
+        var employes = userRepository.findAll().stream().filter(e->e.isEnabled()).collect(Collectors.toList());
         List<PaiementModel> paiementModels = new ArrayList<>();
         for (User user : employes) {
             var paie = paiementRepository.findOneByMonthAndYearAndUser(month, year, user);
@@ -489,8 +490,11 @@ public class PaiementServiceImpl implements PaiementService {
     }
 
     @Override
-    public List<PaiementModel> generatePaie(int month, int year) {
-        var employes = userRepository.findAll();
+    public List<PaiementModel> generatePaie(int month, int year,Long id_user) {
+
+        var employes = userRepository.findAll().stream().filter(e->e.isEnabled())
+        .filter(f->f.getId() !=id_user)
+        .collect(Collectors.toList());
         List<PaiementModel> paiementModels = new ArrayList<>();
         for (User user : employes) {
             var paie = paiementRepository.findOneByMonthAndYearAndUser(month, year, user);
@@ -499,5 +503,10 @@ public class PaiementServiceImpl implements PaiementService {
             paiementModels.add(paiementModel);
         }
         return paiementModels;
+    }
+
+    @Override
+    public List<PaiementModel> paiementByUser(Long userid) {
+        return paiementRepository.findAllByUser(userRepository.findById(userid).get()).stream().map(this::paiementToPaiementModel).collect(Collectors.toList());
     }
 }

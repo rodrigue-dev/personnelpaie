@@ -94,4 +94,9 @@ public class FichePresenceServiceImpl implements FichePresenceService{
         return fichePresenceRepository.findAllByUserAndDatePresenceBetween(user, LocalDate.parse(dateDebut, dateTimeFormatter), LocalDate.parse(datefin, dateTimeFormatter)).stream()
         .map(this::fichePresenceToFichePresenceModel).collect(Collectors.toList());
     }
+    @Override
+    public List<FichePresenceModel> findByEmploye(Long user_id) {
+        var user=userRepository.findById(user_id).get();
+        return fichePresenceRepository.findAll().stream().filter(e->e.getHeureDebut()!=null).filter(e->e.getUser()==user).map(this::fichePresenceToFichePresenceModel).collect(Collectors.toList());
+    }
 }

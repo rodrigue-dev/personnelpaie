@@ -40,6 +40,7 @@ public interface UserServiceInterface {
      * @return the entity.
      */
     Optional<UserModel> findOne(Long id);
+    boolean isEnabledUser(String email);
 
     /**
      * Delete the "id" zone.

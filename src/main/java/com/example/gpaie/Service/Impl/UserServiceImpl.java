@@ -24,6 +24,7 @@ import com.example.gpaie.Model.EmailDetails;
 import com.example.gpaie.Model.JwtRequest;
 import com.example.gpaie.Model.UserModel;
 import com.example.gpaie.Repository.DepartementRepository;
+import com.example.gpaie.Repository.PaiementRepository;
 import com.example.gpaie.Repository.RoleRepository;
 import com.example.gpaie.Repository.UserRepository;
 import com.example.gpaie.Service.MailService;
@@ -46,6 +47,8 @@ public class UserServiceImpl implements UserServiceInterface {
     private PasswordEncoder passwordEncoder;
     @Autowired
     private MailService mailService;
+    @Autowired
+    private PaiementRepository paiementRepository;
 
     @Override
     public UserModel save(UserModel userRequest) {
@@ -97,7 +100,7 @@ public class UserServiceImpl implements UserServiceInterface {
     @Override
     public List<UserModel> findAll() {
         return userRepository.findAll().stream()
-                .filter(Objects::nonNull).filter(e -> e.getAuthority().getAuthority().isBlank()==false)
+                .filter(e->e.isEnabled()).filter(e -> e.getAuthority().getAuthority().isBlank()==false)
                 .map(this::userToUserModel).collect(Collectors.toList());
     }
 
@@ -108,8 +111,11 @@ public class UserServiceImpl implements UserServiceInterface {
 
     @Override
     public void delete(Long id) {
-        userRepository.deleteById(id);
-        ;
+       userRepository.findById(id).ifPresent(e->e.setEnabled(false));
+       userRepository.flush();
+      /*  var paiements=paiementRepository.findAllByUser(userRepository.findById(id).get());
+       paiementRepository.deleteAll(paiements);
+       userRepository.deleteById(id); */
     }
 
     public UserModel userToUserModel(User user) {
@@ -193,6 +199,11 @@ public class UserServiceImpl implements UserServiceInterface {
                 .limit(size).collect(StringBuilder::new, StringBuilder::appendCodePoint, StringBuilder::append)
                 .toString();
 
+    }
+
+    @Override
+    public boolean isEnabledUser(String email) {
+    return  userRepository.findByEmail(email).filter(e->e.isEnabled()).isPresent();
     }
 
 }

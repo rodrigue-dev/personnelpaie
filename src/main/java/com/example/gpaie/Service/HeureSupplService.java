@@ -28,7 +28,7 @@ public interface HeureSupplService {
      * @return the list of entities.
      */
     List<HeureSupplModel> findAll();
-
+    List<HeureSupplModel> heureSuppByUser(Long userid);
     /**
      * Get the "id" zone.
      *

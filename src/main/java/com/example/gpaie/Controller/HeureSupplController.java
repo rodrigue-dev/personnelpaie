@@ -27,10 +27,11 @@ public class HeureSupplController {
 	public List<HeureSupplModel> findAll() {
 		return heureSupplService.findAll();
 	}
-    @GetMapping("/heuresupplementaires/user/{id}")
-    public List<HeureSupplModel> getByFonction(@PathVariable("id") Long id) {
-        return heureSupplService.findAll();
-    }
+    @GetMapping({ "/heuresupplementaires/user/{id}" })
+	public List<HeureSupplModel> findAllByUser(@PathVariable("id") Long id) {
+		return heureSupplService.heureSuppByUser(id);
+	}
+
     @GetMapping("/heuresupplementaires/{id}")
     public ResponseEntity<HeureSupplModel> getById(@PathVariable("id") Long id) {
         Optional<HeureSupplModel> existingItemOptional = heureSupplService.findOne(id);

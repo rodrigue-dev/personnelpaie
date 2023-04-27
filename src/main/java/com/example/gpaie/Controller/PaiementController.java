@@ -39,27 +39,31 @@ public class PaiementController {
 	public List<PaiementModel> findAll() {
 		return paiementService.findAll();
 	}
+    @GetMapping({ "/paiements/user/{id}" })
+	public List<PaiementModel> findAllByUser(@PathVariable("id") Long id) {
+		return paiementService.paiementByUser(id);
+	}
     @GetMapping("/paiements/{id}")
     public ResponseEntity<PaiementModel> getById(@PathVariable("id") Long id) {
         Optional<PaiementModel> existingItemOptional = paiementService.findOne(id);
         return existingItemOptional.map(sms -> new ResponseEntity<>(sms, HttpStatus.OK)).orElseGet(() -> new ResponseEntity<>(HttpStatus.NOT_FOUND));
     }
-    @GetMapping("/paiements/calcul/{month}/{year}/{type}")
+    @GetMapping("/paiements/calcul/{month}/{year}/{type}/{user}")
     public List<PaiementModel>  calculVariableSalaire(@PathVariable("month") Integer month,
-    @PathVariable("year") Integer year,@PathVariable("type") Integer type) {
+    @PathVariable("year") Integer year,@PathVariable("type") Integer type,@PathVariable("user")Long id_user) {
         List<PaiementModel> existingItemOptional=new ArrayList<>();
         switch(type){
             case 1:
-            existingItemOptional=paiementService.calculSalaire(month, year);
+            existingItemOptional=paiementService.calculSalaire(month, year,id_user);
             break;
             case 2:
-            existingItemOptional=paiementService.calculHeureSupp(month, year);
+            existingItemOptional=paiementService.calculHeureSupp(month, year,id_user);
             break;
             case 11:
             existingItemOptional=paiementService.sendMail(month, year);
             break;
             case 10:
-            existingItemOptional=paiementService.generatePaie(month, year);
+            existingItemOptional=paiementService.generatePaie(month, year,id_user);
             break;
         }
         return existingItemOptional;

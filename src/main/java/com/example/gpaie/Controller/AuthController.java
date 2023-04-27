@@ -49,6 +49,10 @@ public class AuthController {
 	@PostMapping("/auth/authenticate")
 	public ResponseEntity<?> createAuthenticationToken(@RequestBody JwtRequest authenticationRequest) throws Exception {
     System.out.println(authenticationRequest.getUsername());
+	
+	if(!userServiceInterface.isEnabledUser(authenticationRequest.getUsername())){
+		throw new Exception("INVALID_CREDENTIALS", null);
+	}
 	UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(
 		authenticationRequest.getUsername(),
 		authenticationRequest.getPassword()

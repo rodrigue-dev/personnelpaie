@@ -63,5 +63,10 @@ public class HeureSupplServiceImpl implements HeureSupplService{
     public void delete(Long id) {
         heureSupplRepository.deleteById(id);
     }
+    @Override
+    public List<HeureSupplModel> heureSuppByUser(Long userid) {
+        var user =userRepository.findById(userid).get();
+        return heureSupplRepository.findAll().stream().filter(e->e.getUser()==user).map(this::heureSupplToHeureSupplModel).collect(Collectors.toList());
+    }
 
 }

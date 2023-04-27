@@ -27,6 +27,10 @@ public class FichePresenceController {
 	public List<FichePresenceModel> findAll() {
 		return fichePresenceService.findAll();
 	}
+    @GetMapping({ "/fichepresences/user/{id}" })
+	public List<FichePresenceModel> findAllByUser(@PathVariable("id") Long id) {
+		return fichePresenceService.findByEmploye(id);
+	}
     @GetMapping({ "/fichepresences/date/{date}" })
 	public List<FichePresenceModel> findAllByDate(@PathVariable("date") String date) {
 		return fichePresenceService.findAllByDate(date);
@@ -36,10 +40,7 @@ public class FichePresenceController {
         Optional<FichePresenceModel> existingItemOptional = fichePresenceService.findOne(id);
         return existingItemOptional.map(sms -> new ResponseEntity<>(sms, HttpStatus.OK)).orElseGet(() -> new ResponseEntity<>(HttpStatus.NOT_FOUND));
     }
-    @GetMapping("/fichepresences/user/{id}")
-    public List<FichePresenceModel> getFichePresenceByUser(@PathVariable("id") Long id) {
-        return fichePresenceService.findAll();
-    }
+   
 
     @PostMapping("/fichepresences")
     public ResponseEntity<FichePresenceModel> createFichePresence(@RequestBody FichePresenceModel FichePresenceModel){

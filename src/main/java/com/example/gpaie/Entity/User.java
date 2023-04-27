@@ -26,6 +26,7 @@ public class User {
     @LastModifiedDate
     private LocalDateTime modifiedAt;
     private boolean enabled = true;
+    @Column(name = "email", unique = true)
     private String email;
     @Column(name = "lang_key", length = 10)
     private String langKey;
@@ -41,6 +42,7 @@ public class User {
     private String matricule;
     private String genre;
     private String etatCivil;
+    @Column(name = "compteIban", unique = true)
     private String compteIban;
     @OneToOne
     @BatchSize(size = 20)
