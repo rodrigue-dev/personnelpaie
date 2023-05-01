@@ -1,12 +1,9 @@
 package com.example.gpaie.Service.Impl;
 
-import java.math.BigDecimal;
-import java.math.RoundingMode;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.time.LocalDate;
 import java.time.LocalTime;
-import java.time.Year;
 import java.time.YearMonth;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
@@ -34,7 +31,6 @@ import com.example.gpaie.Service.FichePresenceService;
 import com.example.gpaie.Service.PaiementService;
 import com.example.gpaie.Service.PlaningService;
 import com.example.gpaie.Utils.PdfUtil;
-import com.lowagie.text.Cell;
 import com.lowagie.text.Chunk;
 import com.lowagie.text.Document;
 import com.lowagie.text.Font;
@@ -48,12 +44,9 @@ import java.io.IOException;
 
 import com.lowagie.text.Paragraph;
 import com.lowagie.text.Phrase;
-import com.lowagie.text.Row;
-import com.lowagie.text.Table;
 import com.lowagie.text.pdf.PdfContentByte;
 import com.lowagie.text.pdf.PdfPCell;
 import com.lowagie.text.pdf.PdfPTable;
-import com.lowagie.text.pdf.PdfTable;
 import com.lowagie.text.pdf.PdfWriter;
 
 import jakarta.mail.MessagingException;

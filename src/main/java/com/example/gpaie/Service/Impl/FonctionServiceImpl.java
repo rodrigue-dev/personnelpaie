@@ -83,7 +83,7 @@ public class FonctionServiceImpl implements FonctionService{
     public FontionModel removeAvantage(fonctionItemRequest aRequest) {
         Fonction fonction=fonctionRepository.findById(aRequest.getFonction_id()).get();
         Set<Avantage>avantages=aRequest.getItems().stream().map(e->avantageRepository.findById(e).get()).collect(Collectors.toSet());
-       fonction.getDepartements().removeAll(avantages);
+       fonction.getAvantages().removeAll(avantages);
        fonctionRepository.saveAndFlush(fonction);
         return new FontionModel(fonction);
     }

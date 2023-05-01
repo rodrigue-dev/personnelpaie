@@ -1,14 +1,8 @@
 package com.example.gpaie.Service.Impl;
 
-import java.time.LocalDate;
-import java.time.LocalTime;
-import java.time.format.DateTimeFormatter;
-import java.util.Arrays;
 import java.util.List;
-import java.util.Objects;
 import java.util.Optional;
 import java.util.Random;
-import java.util.random.RandomGenerator;
 import java.util.stream.Collectors;
 
 import org.slf4j.Logger;
@@ -18,10 +12,8 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import com.example.gpaie.Entity.Role;
 import com.example.gpaie.Entity.User;
 import com.example.gpaie.Model.EmailDetails;
-import com.example.gpaie.Model.JwtRequest;
 import com.example.gpaie.Model.UserModel;
 import com.example.gpaie.Repository.DepartementRepository;
 import com.example.gpaie.Repository.PaiementRepository;
@@ -29,9 +21,6 @@ import com.example.gpaie.Repository.RoleRepository;
 import com.example.gpaie.Repository.UserRepository;
 import com.example.gpaie.Service.MailService;
 import com.example.gpaie.Service.UserServiceInterface;
-import com.example.gpaie.Utils.DateUtil;
-
-import io.micrometer.common.util.StringUtils;
 
 @Service
 public class UserServiceImpl implements UserServiceInterface {
