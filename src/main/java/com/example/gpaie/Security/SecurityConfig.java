@@ -48,6 +48,8 @@ public class SecurityConfig {
           .authorizeHttpRequests()
           .requestMatchers("/auth/**")
             .permitAll()
+          .requestMatchers("/v1/files/**")
+            .permitAll()
           .requestMatchers(HttpMethod.OPTIONS,"/v1/**").permitAll()
           .anyRequest()
             .authenticated()
@@ -78,7 +80,7 @@ public class SecurityConfig {
 
     @Bean
     public WebSecurityCustomizer webSecurityCustomizer() {
-        return (web) -> web.ignoring().requestMatchers("/auth/**");
+        return (web) -> web.ignoring().requestMatchers("/home*/**");
     }
 
     @Bean

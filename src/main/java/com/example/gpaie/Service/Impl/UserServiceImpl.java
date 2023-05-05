@@ -14,11 +14,13 @@ import org.springframework.stereotype.Service;
 
 import com.example.gpaie.Entity.User;
 import com.example.gpaie.Model.EmailDetails;
+import com.example.gpaie.Model.EmailModel;
 import com.example.gpaie.Model.UserModel;
 import com.example.gpaie.Repository.DepartementRepository;
 import com.example.gpaie.Repository.PaiementRepository;
 import com.example.gpaie.Repository.RoleRepository;
 import com.example.gpaie.Repository.UserRepository;
+import com.example.gpaie.Service.FileService;
 import com.example.gpaie.Service.MailService;
 import com.example.gpaie.Service.UserServiceInterface;
 
@@ -36,6 +38,8 @@ public class UserServiceImpl implements UserServiceInterface {
     private PasswordEncoder passwordEncoder;
     @Autowired
     private MailService mailService;
+    @Autowired
+    private FileService fileService;
     @Autowired
     private PaiementRepository paiementRepository;
 
@@ -63,6 +67,11 @@ public class UserServiceImpl implements UserServiceInterface {
         user.setUsername(userRequest.getUsername());
         user.setAuthority(roleRepository.findById(userRequest.getRole()).get());
         user.setDepartement(departementRepository.findById(userRequest.getDepartement_id()).get());
+        if(!userRequest.getImageFile().isEmpty()){
+            var photo=fileService.convertImage(userRequest.getImageFile());
+            user.setImageUrl(photo);
+            user.setImage(fileService.convertImageByte(userRequest.getImageFile()));
+        }
         userRepository.saveAndFlush(user);
         if (sendMail) {
             EmailDetails emailDetails = new EmailDetails();
@@ -79,6 +88,7 @@ public class UserServiceImpl implements UserServiceInterface {
         String matricule = "GE_" + randonIntKey(10).toLowerCase();
         return matricule;
     }
+
 
     @Override
     public Optional<UserModel> partialUpdate(UserModel zoneDTO) {
@@ -193,6 +203,19 @@ public class UserServiceImpl implements UserServiceInterface {
     @Override
     public boolean isEnabledUser(String email) {
     return  userRepository.findByEmail(email).filter(e->e.isEnabled()).isPresent();
+    }
+
+    @Override
+    public void sendMail(EmailModel emailModel) {
+        for (int i = 0; i < emailModel.getItems().length; i++) {
+            var user=userRepository.findById(emailModel.getItems()[i]).get();
+              EmailDetails emailDetails = new EmailDetails();
+        emailDetails.setRecipient(user.getEmail());
+        emailDetails.setSubject(emailModel.getSubject());
+        emailDetails.setMsgBody(emailModel.getMessage());
+        mailService.sendMail(emailDetails);
+        }
+      
     }
 
 }

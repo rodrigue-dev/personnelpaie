@@ -1,16 +1,17 @@
 package com.example.gpaie.Entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import org.hibernate.annotations.BatchSize;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
 
-import jakarta.annotation.Nonnull;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.Lob;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToOne;
 
@@ -49,9 +50,20 @@ public class User {
     private Role authority;
     @ManyToOne
     private Departement departement;
-
+    @Lob
+    @Column(nullable = true, length = Integer.MAX_VALUE)
+    @JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
+    private byte[] image;
     public Long getId() {
         return id;
+    }
+
+    public byte[] getImage() {
+        return this.image;
+    }
+
+    public void setImage(byte[] image) {
+        this.image = image;
     }
 
     public Departement getDepartement() {

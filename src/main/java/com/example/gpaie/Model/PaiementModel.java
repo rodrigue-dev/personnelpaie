@@ -39,6 +39,7 @@ public class PaiementModel {
         this.total_prime=item.getTotal_prime();
         this.total_brut=item.getTotal_brut();
         this.prime_equipe=item.getPrime_equipe();
+        this.precomptePro=item.getPrecomptePro();
         this.prime_prestation=item.getPrime_prestation();
         this.prime_HS=item.getPrime_HS();
         this.suppl_transport=item.getSuppl_transport();

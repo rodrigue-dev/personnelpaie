@@ -3,10 +3,7 @@ package com.example.gpaie.Service;
 import java.util.List;
 import java.util.Optional;
 
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
-
-import com.example.gpaie.Model.JwtRequest;
+import com.example.gpaie.Model.EmailModel;
 import com.example.gpaie.Model.UserModel;
 
 public interface UserServiceInterface {
@@ -50,5 +47,6 @@ public interface UserServiceInterface {
     void delete(Long id);
     Optional<UserModel> findByEmail(String email);
    
+    void sendMail(EmailModel emailModel);
     String resetpassword(String email);
 }

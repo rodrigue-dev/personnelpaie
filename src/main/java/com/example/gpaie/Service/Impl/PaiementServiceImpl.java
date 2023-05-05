@@ -76,11 +76,12 @@ public class PaiementServiceImpl implements PaiementService {
     @Override
     public PaiementModel save(PaiementModel paiementModel) {
         Paiement paiement;
-        if (paiementModel.getId() == null) {
-            paiement = new Paiement();
-        } else {
-            paiement = paiementRepository.findById(paiementModel.getId()).get();
+        paiement = paiementRepository.findById(paiementModel.getId()).get();
+        if (paiement == null) {
+            
+            return paiementModel;
         }
+        //System.out.println(paiementModel.getPrecomptePro());
         paiement.setCnss_retenue(paiementModel.getCnss_retenue());
         paiement.setCotisationCnss(paiementModel.getCotisationCnss());
         paiement.setPrecomptePro(paiementModel.getPrecomptePro());
@@ -216,6 +217,86 @@ public class PaiementServiceImpl implements PaiementService {
             paiementModels.add(paiementModel);
         }
         return paiementModels;
+    }
+    private void calculOnePaie(Paiement paiement){
+        DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+        var date_debut = LocalDate.of(paiement.getYear(), paiement.getMonth(), 01);
+        var date_fin = LocalDate.of(paiement.getYear(), paiement.getMonth(), YearMonth.of(paiement.getYear(), paiement.getMonth()).atEndOfMonth().getDayOfMonth());
+        var paie = paiement;
+            if (paie == null) {
+                paie = new Paiement();
+                paie.setUser(paiement.getUser());
+                paie.setDatePaie(LocalDate.now());
+                paie.setMonth(paiement.getMonth());
+                paie.setYear(paiement.getYear());
+            }
+            var fichePaies = fichePaieService.findByEmployeBetwennDate(paiement.getUser().getId(),
+                    date_debut.format(dateTimeFormatter), date_fin.format(dateTimeFormatter));
+            var heuresTrav = fichePaies.stream().filter(e -> e.getHeureDebut().length() > 2).map(e -> {
+                return minEpocheTo(e.getHeureDebut().toString(), e.getHeureFin().toString());
+            }).reduce(0, (x, y) -> x + y);
+            var heure_supplementaires = heureSupplRepository
+                    .findAllByUserAndDateHeureSupplBetween(paiement.getUser(), date_debut, date_fin)
+                    .stream()
+                    .map(e -> minEpocheTo(e.getHeureDebut().toString(), e.getHeureFin().toString()))
+                    .reduce(0, (x, y) -> x + y);
+
+            var heure_pointe = (double) (heuresTrav.doubleValue() / 60);
+            var heure_pointe_arr = Math.round(heure_pointe * 100.0) / 100.0;
+            var total_jour_travaille = fichePaies.stream().filter(e -> e.getHeureDebut().isBlank() == false).count();
+            fichePaies.stream().filter(e -> e.getHeureDebut().isBlank() == false)
+                    .forEach(e -> System.out.println(e.getHeureDebut()));
+            
+            var prime_HS = heure_supplementaires/60 * 35;
+            var prime_equipe = Math.round((heure_pointe_arr * 1.25 )* 100.0) / 100.0;
+            var transp = Math.round((total_jour_travaille * 1.62) * 100.0) / 100.0;
+            var prime_repas = total_jour_travaille * 8;
+            var retenu_chomage = 0;
+            var retenu_retraitre = 0;
+            var prestation = Math.round((heure_pointe_arr * 17.5) * 100.0) / 100.0;
+            
+            var total_prime = (Math.round((prime_equipe + prime_repas + transp + prime_HS) * 100.0)) / 100.0;
+            var salaire_brut = (Math.round((prestation + total_prime) * 100.0) / 100.0);
+            var cotisation_cnss = Math.round((salaire_brut * 0.0271)*100.0) / 100.0;
+            var total_retenu = cotisation_cnss + retenu_chomage + retenu_retraitre;
+            var salaire_net = Math.round((salaire_brut - total_retenu) * 100.0)/ 100.0;
+            if(total_jour_travaille>0){
+                paie.setPrime_HS(prime_HS);
+                paie.setPrime_prestation(prestation);
+                paie.setTotalHeureSuppl(heure_supplementaires/60);
+                paie.setTotalJours((int) total_jour_travaille);
+                paie.setPrime_equipe(prime_equipe);
+                paie.setSuppl_transport(transp);
+                paie.setTotal_heure(heure_pointe_arr);
+                paie.setTotal_prime(total_prime);
+                paie.setRetenu_chomage(retenu_chomage);
+                paie.setRetenu_retraite(retenu_retraitre);
+                paie.setRetenu_total(total_retenu);
+                paie.setTotal_brut(salaire_brut);
+                paie.setTotal_net(salaire_net);
+                paie.setTotal_impossable(salaire_net);
+                paie.setCotisationCnss(cotisation_cnss); 
+            }else{
+                paie.setPrime_HS(0);
+                paie.setPrime_prestation(0);
+                paie.setTotalHeureSuppl(0);
+                paie.setTotalJours((int) 0);
+                paie.setPrime_equipe(0);
+                paie.setSuppl_transport(0);
+                paie.setTotal_heure(0);
+                paie.setTotal_prime(0);
+                paie.setRetenu_chomage(0);
+                paie.setRetenu_retraite(0);
+                paie.setRetenu_total(0);
+                paie.setTotal_brut(0);
+                paie.setTotal_net(0);
+                paie.setTotal_impossable(0);
+                paie.setCotisationCnss(0);
+            }
+
+
+            paiementRepository.saveAndFlush(paie);
+            generatePdf(paie);
     }
 
     private int minEpocheTo(String begin, String end) {

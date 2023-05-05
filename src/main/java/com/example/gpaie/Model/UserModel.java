@@ -2,6 +2,8 @@ package com.example.gpaie.Model;
 
 import java.io.Serializable;
 
+import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
+
 import com.example.gpaie.Entity.User;
 
 public class UserModel implements Serializable{
@@ -15,11 +17,12 @@ public class UserModel implements Serializable{
     private String genre;
     private String etatCivil;
     private String compteIban;
+    private String imageFile;
     private String email;
     private String role;
     private long departement_id;
     private String departement;
-
+    private byte[] image;
     public UserModel() {
     }
 
@@ -37,8 +40,32 @@ public class UserModel implements Serializable{
         this.username = user.getUsername();
         this.departement=user.getDepartement().getNomDepartement();
         this.departement_id=user.getDepartement().getId();
+        
+        String fileDownloadUri = ServletUriComponentsBuilder
+          .fromCurrentContextPath()
+          .path("/v1/files/")
+          .path(user.getId().toString())
+          .toUriString();
+          this.imageFile=fileDownloadUri;
+        this.image=user.getImage();
     }
 
+
+    public byte[] getImage() {
+        return this.image;
+    }
+
+    public void setImage(byte[] image) {
+        this.image = image;
+    }
+
+    public String getImageFile() {
+        return this.imageFile;
+    }
+
+    public void setImageFile(String imageFile) {
+        this.imageFile = imageFile;
+    }
 
     public Long getId() {
         return this.id;

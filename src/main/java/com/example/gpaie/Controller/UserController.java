@@ -4,10 +4,13 @@ import java.util.List;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.web.bind.annotation.*;
+
+import com.example.gpaie.Model.EmailModel;
 import com.example.gpaie.Model.UserModel;
 import com.example.gpaie.Service.UserServiceInterface;
 
@@ -21,7 +24,9 @@ public class UserController {
 	private AuthenticationManager authenticationManager;
     @GetMapping({ "/users" })
 	public List<UserModel> findAll() {
-    
+        /* return userServiceInterface.findAll().stream().map(e->{
+
+        }); */
 		return userServiceInterface.findAll();
 	}
     @GetMapping("/users/{id}")
@@ -51,6 +56,17 @@ public class UserController {
             return new ResponseEntity<>(null, HttpStatus.EXPECTATION_FAILED);
         } 
     }
+    @PostMapping("/users/sendmail")
+    public ResponseEntity<?> sendMail(@RequestBody EmailModel user){
+    
+         try {
+            userServiceInterface.sendMail(user);
+            return new ResponseEntity<>(null, HttpStatus.CREATED);
+        } catch (Exception e) {
+            System.out.println(e.getMessage());
+            return new ResponseEntity<>(null, HttpStatus.EXPECTATION_FAILED);
+        } 
+    }
 
     @PutMapping("/users")
     public ResponseEntity<UserModel> updateUser(@RequestBody UserModel user){
@@ -68,5 +84,15 @@ public class UserController {
         userServiceInterface.delete(id);
     return   new ResponseEntity<>(null, HttpStatus.OK);
        
+    }
+
+    @GetMapping("/files/{id}")
+    public ResponseEntity<byte[]> getFile(@PathVariable Long id) {
+        UserModel fileDB = userServiceInterface.findOne(id).get();
+
+        System.out.println(fileDB.getImageFile());
+      return ResponseEntity.ok()
+          .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + fileDB.getFirstname() + "\"")
+          .body(fileDB.getImage());
     }
 }

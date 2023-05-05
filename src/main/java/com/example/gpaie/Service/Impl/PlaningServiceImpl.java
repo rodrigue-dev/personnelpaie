@@ -157,7 +157,7 @@ public class PlaningServiceImpl implements PlaningService {
                     makeP.setPlaning_id(planinig.getId());
                     var minFin = planinig.getHeureFin().getHour() * 60 + planinig.getHeureFin().getMinute();
                     var minDebut = planinig.getHeureDebut().getHour() * 60 + planinig.getHeureDebut().getMinute();
-                    System.out.println(minFin - minDebut);
+                   // System.out.println(minFin - minDebut);
 
                     total_heure += (minFin - minDebut);
                 }

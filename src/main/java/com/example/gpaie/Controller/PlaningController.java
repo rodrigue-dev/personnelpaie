@@ -57,6 +57,12 @@ public class PlaningController {
         Optional<PlaningModel> existingItemOptional = planingService.findOne(id);
         return existingItemOptional.map(sms -> new ResponseEntity<>(sms, HttpStatus.OK)).orElseGet(() -> new ResponseEntity<>(HttpStatus.NOT_FOUND));
     }
+    @DeleteMapping("/planings/{id}")
+    public ResponseEntity<?> deletePlaning(@PathVariable("id") Long id) {
+        planingService.delete(id);
+    return   new ResponseEntity<>(null, HttpStatus.OK);
+       
+    }
 
     @PostMapping("/planings")
     public ResponseEntity<?> createPlaning(@RequestBody PlaningModel planingModel){

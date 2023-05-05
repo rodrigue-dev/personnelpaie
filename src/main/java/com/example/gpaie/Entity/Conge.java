@@ -1,4 +1,8 @@
 package com.example.gpaie.Entity;
+
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
 
@@ -6,9 +10,8 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
-import java.time.LocalDateTime;
 @Entity
-public class Avantage {
+public class Conge {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -16,8 +19,7 @@ public class Avantage {
     private LocalDateTime createdAt;
     @LastModifiedDate
     private LocalDateTime modifiedAt;
-    private String typeAvantage;
-
+    private LocalDate dateConge;
 
     public Long getId() {
         return this.id;
@@ -43,20 +45,12 @@ public class Avantage {
         this.modifiedAt = modifiedAt;
     }
 
-    public String getTypeAvantage() {
-        return this.typeAvantage;
+    public LocalDate getDateConge() {
+        return this.dateConge;
     }
 
-    public void setTypeAvantage(String typeAvantage) {
-        this.typeAvantage = typeAvantage;
+    public void setDateConge(LocalDate dateConge) {
+        this.dateConge = dateConge;
     }
-
-/*     public Set<Fonction> getFonctions() {
-        return this.fonctions;
-    }
-
-    public void setFonctions(Set<Fonction> fonctions) {
-        this.fonctions = fonctions;
-    } */
 
 }
