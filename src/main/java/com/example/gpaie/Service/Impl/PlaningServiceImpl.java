@@ -5,6 +5,7 @@ import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -14,11 +15,13 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.example.gpaie.Entity.Absence;
 import com.example.gpaie.Entity.Planinig;
 import com.example.gpaie.Entity.User;
 import com.example.gpaie.Model.Makeplaning;
 import com.example.gpaie.Model.PlaningModel;
 import com.example.gpaie.Model.PlaningUserModel;
+import com.example.gpaie.Repository.AbsenceRepository;
 import com.example.gpaie.Repository.FonctionRepository;
 import com.example.gpaie.Repository.PlaningRepository;
 import com.example.gpaie.Repository.TypePlaningRepository;
@@ -33,7 +36,7 @@ public class PlaningServiceImpl implements PlaningService {
     @Autowired
     private PlaningRepository planingRepository;
     @Autowired
-    private TypePlaningRepository typePlaningRepository;
+    private AbsenceRepository congeRepository;
     @Autowired
     private FonctionRepository fonctionRepository;
     @Autowired
@@ -43,71 +46,21 @@ public class PlaningServiceImpl implements PlaningService {
     public PlaningModel save(PlaningModel planingModel) {
         // System.out.println(planingModel);
         DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
-        DateTimeFormatter timeFormatter = DateTimeFormatter.ofPattern("HH:mm");
         Planinig planinig;
-        LocalDate in_date=LocalDate.parse(planingModel.getDate_debut(), dateTimeFormatter);
-        if (planingModel.getRepeat().equals("none")) {
-           
-            if (planingModel.getId() != null) {
-                planinig = planingRepository.findById(planingModel.getId()).get();
-            } else {
-                planinig = new Planinig();
-                planinig.setDatePlaning(LocalDate.parse(planingModel.getDate_debut(), dateTimeFormatter));
-            }
-
-            planinig.setTypePlaining(typePlaningRepository.findById(planingModel.getType_planing_id()).get());
-            planinig.setFonction(fonctionRepository.findById(planingModel.getFonction_id()).get());
-            planinig.setUser(userRepository.findById(planingModel.getUser_id()).get());
-            planinig.setTypePlaining(typePlaningRepository.findById(planingModel.getType_planing_id()).get());
-            planinig.setFonction(fonctionRepository.findById(planingModel.getFonction_id()).get());
-            planinig.setUser(userRepository.findById(planingModel.getUser_id()).get());
-
-            planinig.setHeureDebut(LocalTime.parse(planingModel.getHeure_debut().toString(), timeFormatter));
-            planinig.setHeureFin(LocalTime.parse(planingModel.getHeure_fin().toString(), timeFormatter));
-            planingRepository.saveAndFlush(planinig);
-        } else if (planingModel.getRepeat().equals("semaine")) {
-
-            List<LocalDate> days = DateUtil
-                    .getWeekFromDate(LocalDate.parse(planingModel.getDate_debut(), dateTimeFormatter));
-            for (LocalDate localDate : days) {
-                if(localDate.isAfter(in_date)|| localDate.isEqual(in_date)){
-                planinig = new Planinig();
-                planinig.setDatePlaning(localDate);
-                planinig.setTypePlaining(typePlaningRepository.findById(planingModel.getType_planing_id()).get());
-                planinig.setFonction(fonctionRepository.findById(planingModel.getFonction_id()).get());
-                planinig.setUser(userRepository.findById(planingModel.getUser_id()).get());
-                planinig.setTypePlaining(typePlaningRepository.findById(planingModel.getType_planing_id()).get());
-                planinig.setFonction(fonctionRepository.findById(planingModel.getFonction_id()).get());
-                planinig.setUser(userRepository.findById(planingModel.getUser_id()).get());
-                planinig.setHeureDebut(LocalTime.parse(planingModel.getHeure_debut().toString(), timeFormatter));
-                planinig.setHeureFin(LocalTime.parse(planingModel.getHeure_fin().toString(), timeFormatter));
-                planingRepository.saveAndFlush(planinig);
-                }
-            }
-
+        if (planingModel.getId() != null) {
+            planinig = planingRepository.findById(planingModel.getId()).get();
         } else {
-            List<LocalDate> days = DateUtil
-            .getMonthFromDate(LocalDate.parse(planingModel.getDate_debut(), dateTimeFormatter));
-    for (LocalDate localDate : days) {
-        System.out.println(localDate);
-        if(localDate.isAfter(in_date)|| localDate.isEqual(in_date)){
-        planinig = new Planinig();
-        planinig.setDatePlaning(localDate);
-        planinig.setTypePlaining(typePlaningRepository.findById(planingModel.getType_planing_id()).get());
+            planinig = new Planinig();
+            planinig.setDatePlaning(LocalDate.parse(planingModel.getDate_debut(), dateTimeFormatter));
+        }
         planinig.setFonction(fonctionRepository.findById(planingModel.getFonction_id()).get());
         planinig.setUser(userRepository.findById(planingModel.getUser_id()).get());
-        planinig.setTypePlaining(typePlaningRepository.findById(planingModel.getType_planing_id()).get());
         planinig.setFonction(fonctionRepository.findById(planingModel.getFonction_id()).get());
         planinig.setUser(userRepository.findById(planingModel.getUser_id()).get());
-        planinig.setHeureDebut(LocalTime.parse(planingModel.getHeure_debut().toString(), timeFormatter));
-        planinig.setHeureFin(LocalTime.parse(planingModel.getHeure_fin().toString(), timeFormatter));
+        planinig.setType_planing(planingModel.getType_planing());
+        planinig.setDateDebut(LocalDate.parse(planingModel.getDate_debut().toString(), dateTimeFormatter));
+        planinig.setDateFin(LocalDate.parse(planingModel.getDate_fin().toString(), dateTimeFormatter));
         planingRepository.saveAndFlush(planinig);
-        }
-        
-    }
-
-        }
-
         return planingModel;
     }
 
@@ -129,8 +82,13 @@ public class PlaningServiceImpl implements PlaningService {
 
     @Override
     public void delete(Long id) {
+        var planing=planingRepository.findById(id).get();
+        var conge=new Absence();
+        conge.setDateAbsence(planing.getDatePlaning());
+        conge.setUser(planing.getUser());
+        congeRepository.save(conge);
         planingRepository.deleteById(id);
-        ;
+       
     }
 
     public PlaningModel planingToPlaningModel(Planinig planinig) {
@@ -146,23 +104,96 @@ public class PlaningServiceImpl implements PlaningService {
         List<PlaningUserModel> planingUserModels = new ArrayList<>();
         for (User user : users) {
             List<Makeplaning> makeplanings = new ArrayList<>();
+            var nb_user=0;
             double total_heure = 0.0;
             for (LocalDate localDate2 : days) {
-                var makeP = new Makeplaning();
-                Planinig planinig = planingRepository.findOneByDatePlaningAndUser(localDate2, user);
-                if (planinig != null) {
-                    makeP.setFonction(planinig.getFonction().getTypeFonction());
-                    makeP.setHeure_debut(planinig.getHeureDebut().toString());
-                    makeP.setHeure_fin(planinig.getHeureFin().toString());
-                    makeP.setPlaning_id(planinig.getId());
-                    var minFin = planinig.getHeureFin().getHour() * 60 + planinig.getHeureFin().getMinute();
-                    var minDebut = planinig.getHeureDebut().getHour() * 60 + planinig.getHeureDebut().getMinute();
-                   // System.out.println(minFin - minDebut);
+                if (user.getTypeplaning() == 2) { //Etudiant
+                    var makeP = new Makeplaning();
+                    Planinig planinig = planingRepository.findOneByDatePlaningAndUser(localDate2, user);
+                    List<Planinig>planinigs=planingRepository.findAllByUserAndDatePlaningBetween(user, days.stream().findFirst().get(), days.stream().sorted(Comparator.reverseOrder()).findFirst().get());
+                    Absence absence=congeRepository.findOneByDateAbsenceAndUser(localDate2, user);
+                    if(planinig == null && absence==null && planinigs.size()<3){
+                        planinig=new Planinig();
+                        planinig.setFonction(user.getFonction());
+                        planinig.setHeureDebut(LocalTime.of(8, 0, 0));
+                        planinig.setHeureFin(planinig.getHeureDebut().plusHours(8));
+                        planinig.setDatePlaning(localDate2);
+                        planinig.setUser(user);
+                        planinig.setType_planing(user.getTypeplaning());
+                        planingRepository.save(planinig);
+                        
+                    }
+                    if (planinig != null) {
+                        makeP.setFonction(planinig.getFonction().getTypeFonction());
+                        makeP.setHeure_debut(planinig.getHeureDebut().toString());
+                        makeP.setHeure_fin(planinig.getHeureFin().toString());
+                        makeP.setPlaning_id(planinig.getId());
+                        var minFin = planinig.getHeureFin().getHour() * 60 + planinig.getHeureFin().getMinute();
+                        var minDebut = planinig.getHeureDebut().getHour() * 60 + planinig.getHeureDebut().getMinute();
+                        nb_user+=1;
+                        total_heure += (minFin - minDebut);
+                    }
+                    makeP.setDate_planing(localDate2.format(dateTimeFormatter));
+                    if(nb_user<=3){
 
-                    total_heure += (minFin - minDebut);
+                      makeplanings.add(makeP);
+                    }
+                } else if (user.getTypeplaning() == 1) { //Mitemps
+                    var makeP = new Makeplaning();
+                    Planinig planinig = planingRepository.findOneByDatePlaningAndUser(localDate2, user);
+                    Absence absence=congeRepository.findOneByDateAbsenceAndUser(localDate2, user);
+                    if(planinig == null && absence==null){
+                        planinig=new Planinig();
+                        planinig.setFonction(user.getFonction());
+                        planinig.setHeureDebut(LocalTime.of(8, 0, 0));
+                        planinig.setHeureFin(planinig.getHeureDebut().plusHours(4));
+                        planinig.setDatePlaning(localDate2);
+                        planinig.setUser(user);
+                        planinig.setType_planing(user.getTypeplaning());
+                        planingRepository.save(planinig);
+                        
+                    }
+                    if (planinig != null) {
+                        makeP.setFonction(planinig.getFonction().getTypeFonction());
+                        makeP.setHeure_debut(planinig.getHeureDebut().toString());
+                        makeP.setHeure_fin(planinig.getHeureFin().toString());
+                        makeP.setPlaning_id(planinig.getId());
+                        var minFin = planinig.getHeureFin().getHour() * 60 + planinig.getHeureFin().getMinute();
+                        var minDebut = planinig.getHeureDebut().getHour() * 60 + planinig.getHeureDebut().getMinute();
+
+                        total_heure += (minFin - minDebut);
+                    }
+                    makeP.setDate_planing(localDate2.format(dateTimeFormatter));
+                    makeplanings.add(makeP);
+                } else { //temps plein
+                    var makeP = new Makeplaning();
+                    Planinig planinig = planingRepository.findOneByDatePlaningAndUser(localDate2, user);
+                    Absence absence=congeRepository.findOneByDateAbsenceAndUser(localDate2, user);
+                    if(planinig == null && absence==null){
+                        planinig=new Planinig();
+                        planinig.setFonction(user.getFonction());
+                        planinig.setHeureDebut(LocalTime.of(8, 0, 0));
+                        planinig.setHeureFin(planinig.getHeureDebut().plusHours(8));
+                        planinig.setDatePlaning(localDate2);
+                        planinig.setUser(user);
+                        planinig.setType_planing(user.getTypeplaning());
+                        planingRepository.save(planinig);
+                        
+                    }
+                    if (planinig != null) {
+                        makeP.setFonction(planinig.getFonction().getTypeFonction());
+                        makeP.setHeure_debut(planinig.getHeureDebut().toString());
+                        makeP.setHeure_fin(planinig.getHeureFin().toString());
+                        makeP.setPlaning_id(planinig.getId());
+                        var minFin = planinig.getHeureFin().getHour() * 60 + planinig.getHeureFin().getMinute();
+                        var minDebut = planinig.getHeureDebut().getHour() * 60 + planinig.getHeureDebut().getMinute();
+
+                        total_heure += (minFin - minDebut);
+                    }
+                    makeP.setDate_planing(localDate2.format(dateTimeFormatter));
+                    makeplanings.add(makeP);
                 }
-                makeP.setDate_planing(localDate2.format(dateTimeFormatter));
-                makeplanings.add(makeP);
+
             }
             PlaningUserModel planingUserModel = new PlaningUserModel();
             planingUserModel.setUser(user.getNom() + ' ' + user.getPrenom());
@@ -204,6 +235,17 @@ public class PlaningServiceImpl implements PlaningService {
         for (LocalDate localDate2 : days) {
             var makeP = new Makeplaning();
             Planinig planinig = planingRepository.findOneByDatePlaningAndUser(localDate2, user);
+            if(planinig == null){
+                planinig=new Planinig();
+                planinig.setFonction(user.getFonction());
+                planinig.setHeureDebut(LocalTime.of(8, 0, 0));
+                planinig.setHeureFin(planinig.getHeureDebut().plusHours(4));
+                planinig.setDatePlaning(localDate2);
+                planinig.setUser(user);
+                planinig.setType_planing(user.getTypeplaning());
+                planingRepository.save(planinig);
+                
+            }
             if (planinig != null) {
                 makeP.setFonction(planinig.getFonction().getTypeFonction());
                 makeP.setHeure_debut(planinig.getHeureDebut().toString());

@@ -17,11 +17,13 @@ import com.example.gpaie.Model.EmailDetails;
 import com.example.gpaie.Model.EmailModel;
 import com.example.gpaie.Model.UserModel;
 import com.example.gpaie.Repository.DepartementRepository;
+import com.example.gpaie.Repository.FonctionRepository;
 import com.example.gpaie.Repository.PaiementRepository;
 import com.example.gpaie.Repository.RoleRepository;
 import com.example.gpaie.Repository.UserRepository;
 import com.example.gpaie.Service.FileService;
 import com.example.gpaie.Service.MailService;
+import com.example.gpaie.Service.PlaningService;
 import com.example.gpaie.Service.UserServiceInterface;
 
 @Service
@@ -35,13 +37,15 @@ public class UserServiceImpl implements UserServiceInterface {
     @Autowired
     private DepartementRepository departementRepository;
     @Autowired
+    private FonctionRepository fonctionRepository;
+    @Autowired
     private PasswordEncoder passwordEncoder;
     @Autowired
     private MailService mailService;
     @Autowired
     private FileService fileService;
     @Autowired
-    private PaiementRepository paiementRepository;
+    private PlaningService planingService;
 
     @Override
     public UserModel save(UserModel userRequest) {
@@ -51,6 +55,7 @@ public class UserServiceImpl implements UserServiceInterface {
         if (userRequest.getId() == null) {
             user = new User();
             user.setPassword(passwordEncoder.encode(pass));
+            user.setTypeplaning(userRequest.getTypeplaning());
             sendMail = true;
         } else {
             user = userRepository.findById(userRequest.getId()).get();
@@ -67,20 +72,29 @@ public class UserServiceImpl implements UserServiceInterface {
         user.setUsername(userRequest.getUsername());
         user.setAuthority(roleRepository.findById(userRequest.getRole()).get());
         user.setDepartement(departementRepository.findById(userRequest.getDepartement_id()).get());
+        user.setFonction(fonctionRepository.findById(userRequest.getFonction_id()).get());
         if(!userRequest.getImageFile().isEmpty()){
             var photo=fileService.convertImage(userRequest.getImageFile());
             user.setImageUrl(photo);
             user.setImage(fileService.convertImageByte(userRequest.getImageFile()));
         }
-        userRepository.saveAndFlush(user);
+        User u=userRepository.saveAndFlush(user);
+        if(u.getTypeplaning()==0){
+
+        }else if(u.getTypeplaning()==1){
+
+        }else{
+
+        }
         if (sendMail) {
             EmailDetails emailDetails = new EmailDetails();
             emailDetails.setRecipient(user.getEmail());
             emailDetails.setSubject("Creation du personnel");
             emailDetails.setMsgBody(
                     "Informations de connexion: Eamil:" + user.getEmail() + " Password: " + pass);
-            mailService.sendMail(emailDetails);
+          //  mailService.sendMail(emailDetails);
         }
+        userRequest.setId(u.getId());
         return userRequest;
     }
 

@@ -13,6 +13,8 @@ public class PlaningModel {
     private long departement_id;
     private long fonction_id;
     private long type_planing_id;
+    private int type_planing;
+    private String type_planing_string;
     private String typeFonction;
     private String user_name;
     private String repeat;
@@ -23,16 +25,37 @@ public class PlaningModel {
 
     public PlaningModel(Planinig item) {
         this.id=item.getId();
+        this.date_debut=item.getDateDebut().toString();
+        this.date_fin=item.getDateFin().toString();
+        if(item.getHeureDebut()!=null){
         this.heure_debut=item.getHeureDebut().toString();
         this.heure_fin=item.getHeureFin().toString();
-        this.date_debut=item.getDatePlaning().toString();
-       // this.date_fin=item.getDateFin().toString();
+        }
+        
         this.user_id=item.getUser().getId();
         this.departement_id=item.getUser().getDepartement().getId();
         this.fonction_id=item.getFonction().getId();
-        this.type_planing_id=item.getFonction().getId();
         this.typeFonction=item.getFonction().getTypeFonction();
-        this.user_name=item.getUser().getNom();
+        this.user_name=item.getUser().getNom() +" "+ item.getUser().getPrenom();
+        this.type_planing_string=makeType(item.getType_planing());
+        this.type_planing=item.getType_planing();
+        
+    }
+
+    public int getType_planing() {
+        return this.type_planing;
+    }
+
+    public void setType_planing(int type_planing) {
+        this.type_planing = type_planing;
+    }
+
+    public String getType_planing_string() {
+        return this.type_planing_string;
+    }
+
+    public void setType_planing_string(String type_planing_string) {
+        this.type_planing_string = type_planing_string;
     }
 
     public long getDepartement_id() {
@@ -132,7 +155,22 @@ public class PlaningModel {
     public void setHeure_fin(String heure_fin) {
         this.heure_fin = heure_fin;
     }
-
+    private String makeType(int typeplaning){
+        switch(typeplaning){
+            case 0:
+            return "Temps plein";
+          
+            case 1:
+            return "Mi-temps";
+          
+            case 2:
+            return "Etudiant";
+        
+            default:
+            return "";
+        }
+         
+    }
     @Override
     public String toString() {
         return "{" +

@@ -32,9 +32,18 @@ public class Planinig {
     private LocalTime heureDebut;
     private LocalTime heureFin;
     private String isPointe;
+    private Integer type_planing;
 
     public Long getId() {
         return this.id;
+    }
+
+    public Integer getType_planing() {
+        return this.type_planing;
+    }
+
+    public void setType_planing(Integer type_planing) {
+        this.type_planing = type_planing;
     }
 
     public LocalDate getDatePlaning() {

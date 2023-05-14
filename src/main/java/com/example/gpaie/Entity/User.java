@@ -50,12 +50,31 @@ public class User {
     private Role authority;
     @ManyToOne
     private Departement departement;
+    @ManyToOne
+    private Fonction fonction;
     @Lob
     @Column(nullable = true, length = Integer.MAX_VALUE)
     @JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
     private byte[] image;
+    private Integer typeplaning;//0 temps-plein 1: mi-temps, 2:student
     public Long getId() {
         return id;
+    }
+
+    public Integer getTypeplaning() {
+        return this.typeplaning;
+    }
+
+    public void setTypeplaning(Integer typeplaning) {
+        this.typeplaning = typeplaning;
+    }
+
+    public Fonction getFonction() {
+        return this.fonction;
+    }
+
+    public void setFonction(Fonction fonction) {
+        this.fonction = fonction;
     }
 
     public byte[] getImage() {

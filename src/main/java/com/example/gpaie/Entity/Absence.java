@@ -10,8 +10,9 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.ManyToOne;
 @Entity
-public class Conge {
+public class Absence {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -19,14 +20,32 @@ public class Conge {
     private LocalDateTime createdAt;
     @LastModifiedDate
     private LocalDateTime modifiedAt;
-    private LocalDate dateConge;
-
+    private LocalDate dateAbsence;
+    private String motif;
+    @ManyToOne
+    private User user;
     public Long getId() {
         return this.id;
     }
 
     public void setId(Long id) {
         this.id = id;
+    }
+
+    public String getMotif() {
+        return this.motif;
+    }
+
+    public void setMotif(String motif) {
+        this.motif = motif;
+    }
+
+    public User getUser() {
+        return this.user;
+    }
+
+    public void setUser(User user) {
+        this.user = user;
     }
 
     public LocalDateTime getCreatedAt() {
@@ -45,12 +64,14 @@ public class Conge {
         this.modifiedAt = modifiedAt;
     }
 
-    public LocalDate getDateConge() {
-        return this.dateConge;
+
+    public LocalDate getDateAbsence() {
+        return this.dateAbsence;
     }
 
-    public void setDateConge(LocalDate dateConge) {
-        this.dateConge = dateConge;
+    public void setDateAbsence(LocalDate dateAbsence) {
+        this.dateAbsence = dateAbsence;
     }
+
 
 }

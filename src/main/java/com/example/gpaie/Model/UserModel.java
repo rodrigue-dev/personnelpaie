@@ -21,8 +21,11 @@ public class UserModel implements Serializable{
     private String email;
     private String role;
     private long departement_id;
+    private long fonction_id;
     private String departement;
+    private String fonction;
     private byte[] image;
+    private Integer typeplaning;
     public UserModel() {
     }
 
@@ -40,6 +43,9 @@ public class UserModel implements Serializable{
         this.username = user.getUsername();
         this.departement=user.getDepartement().getNomDepartement();
         this.departement_id=user.getDepartement().getId();
+        this.fonction_id=user.getFonction().getId();
+        this.fonction=user.getFonction().getTypeFonction();
+        this.typeplaning=user.getTypeplaning();
         
         String fileDownloadUri = ServletUriComponentsBuilder
           .fromCurrentContextPath()
@@ -50,6 +56,30 @@ public class UserModel implements Serializable{
         this.image=user.getImage();
     }
 
+    public long getFonction_id() {
+        return this.fonction_id;
+    }
+
+    public void setFonction_id(long fonction_id) {
+        this.fonction_id = fonction_id;
+    }
+
+    public String getFonction() {
+        return this.fonction;
+    }
+
+    public void setFonction(String fonction) {
+        this.fonction = fonction;
+    }
+
+
+    public Integer getTypeplaning() {
+        return this.typeplaning;
+    }
+
+    public void setTypeplaning(Integer typeplaning) {
+        this.typeplaning = typeplaning;
+    }
 
     public byte[] getImage() {
         return this.image;
