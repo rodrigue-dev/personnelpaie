@@ -35,6 +35,10 @@ public class FichePresenceController {
 	public List<FichePresenceModel> findAllByDate(@PathVariable("date") String date) {
 		return fichePresenceService.findAllByDate(date);
 	}
+    @GetMapping({ "/fichepresences/plage/{date}/{id}" })
+	public FichePresenceModel findAllByDate(@PathVariable("date") String date,@PathVariable("id") Long id) {
+		return fichePresenceService.findOneByEmployeBetwennDate(id,date);
+	}
     @GetMapping("/fichepresences/{id}")
     public ResponseEntity<FichePresenceModel> getById(@PathVariable("id") Long id) {
         Optional<FichePresenceModel> existingItemOptional = fichePresenceService.findOne(id);

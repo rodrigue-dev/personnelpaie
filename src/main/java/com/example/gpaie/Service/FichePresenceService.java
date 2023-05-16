@@ -31,6 +31,7 @@ public interface FichePresenceService {
     List<FichePresenceModel> findAllByDate(String datePresence);
     List<FichePresenceModel> findByEmploye(Long user_id);
     List<FichePresenceModel> findByEmployeBetwennDate(Long user_id,String dateDebut,String datefin);
+    FichePresenceModel findOneByEmployeBetwennDate(Long user_id,String datePlage);
 
     /**
      * Get the "id" zone.

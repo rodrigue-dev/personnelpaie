@@ -2,6 +2,7 @@ package com.example.gpaie.Repository;
 
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 
@@ -12,6 +13,6 @@ public interface FichePresenceRepository  extends JpaRepository<FichePresence, L
 
     List<FichePresence> findAllByUserAndDatePresence(User user, LocalDate datePresence);
     List<FichePresence> findAllByUserAndDatePresenceBetween(User user, LocalDate datePresence,LocalDate datePresence2);
-    FichePresence findByUserAndDatePresence(User user, LocalDate datePresence);
+   Optional< FichePresence> findByUserAndDatePresence(User user, LocalDate datePresence);
     
 }
