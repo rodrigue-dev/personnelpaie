@@ -121,8 +121,14 @@ public class PlaningServiceImpl implements PlaningService {
                                 days.stream().findFirst().get(),
                                 days.stream().sorted(Comparator.reverseOrder()).findFirst().get());
                         Absence absence = congeRepository.findOneByDateAbsenceAndUser(localDate2, user);
-                        FichePresence fichePresence = fichePresenceRepository.findByUserAndDatePresence(user,
-                                localDate2).get();
+                        var fichePresenceOptionel = fichePresenceRepository.findByUserAndDatePresence(user,
+                                localDate2);
+                        FichePresence fichePresence = null;
+                        if (fichePresenceOptionel.isPresent()) {
+                            fichePresence = fichePresenceRepository.findByUserAndDatePresence(user,
+                                    localDate2).get();
+                        }
+
                         LocalTime start = LocalTime.of(8, 0, 0);
                         LocalTime stop = start.plusHours(8);
                         if (fichePresence != null) {
@@ -163,8 +169,13 @@ public class PlaningServiceImpl implements PlaningService {
                         var makeP = new Makeplaning();
                         Planinig planinig = planingRepository.findOneByDatePlaningAndUser(localDate2, user);
                         Absence absence = congeRepository.findOneByDateAbsenceAndUser(localDate2, user);
-                        FichePresence fichePresence = fichePresenceRepository.findByUserAndDatePresence(user,
-                                localDate2).get();
+                        var fichePresenceOptionel = fichePresenceRepository.findByUserAndDatePresence(user,
+                                localDate2);
+                        FichePresence fichePresence = null;
+                        if (fichePresenceOptionel.isPresent()) {
+                            fichePresence = fichePresenceRepository.findByUserAndDatePresence(user,
+                                    localDate2).get();
+                        }
                         LocalTime start = LocalTime.of(8, 0, 0);
                         LocalTime stop = start.plusHours(4);
                         if (fichePresence != null) {
@@ -201,7 +212,13 @@ public class PlaningServiceImpl implements PlaningService {
                         var makeP = new Makeplaning();
                         Planinig planinig = planingRepository.findOneByDatePlaningAndUser(localDate2, user);
                         Absence absence = congeRepository.findOneByDateAbsenceAndUser(localDate2, user);
-                        FichePresence fichePresence = fichePresenceRepository.findByUserAndDatePresence(user,localDate2).get();
+                        var fichePresenceOptionel = fichePresenceRepository.findByUserAndDatePresence(user,
+                                localDate2);
+                        FichePresence fichePresence = null;
+                        if (fichePresenceOptionel.isPresent()) {
+                            fichePresence = fichePresenceRepository.findByUserAndDatePresence(user,
+                                    localDate2).get();
+                        }
                         LocalTime start = LocalTime.of(8, 0, 0);
                         LocalTime stop = start.plusHours(8);
                         if (fichePresence != null) {
@@ -242,15 +259,14 @@ public class PlaningServiceImpl implements PlaningService {
                     makeplanings.add(makeP);
                 }
 
-                
             }
             PlaningUserModel planingUserModel = new PlaningUserModel();
-                planingUserModel.setUser(user.getNom() + ' ' + user.getPrenom());
-                planingUserModel.setUser_id(user.getId());
-                planingUserModel.setDepartement_id(user.getDepartement().getId());
-                planingUserModel.setMakeplanings(makeplanings);
-                planingUserModel.setTotal_heure(total_heure / 60);
-                planingUserModels.add(planingUserModel);
+            planingUserModel.setUser(user.getNom() + ' ' + user.getPrenom());
+            planingUserModel.setUser_id(user.getId());
+            planingUserModel.setDepartement_id(user.getDepartement().getId());
+            planingUserModel.setMakeplanings(makeplanings);
+            planingUserModel.setTotal_heure(total_heure / 60);
+            planingUserModels.add(planingUserModel);
         }
         return planingUserModels;
 
@@ -283,38 +299,38 @@ public class PlaningServiceImpl implements PlaningService {
         double total_heure = 0.0;
         for (LocalDate localDate2 : days) {
             if (localDate2.getDayOfWeek().getValue() != 6 && localDate2.getDayOfWeek().getValue() != 7) {
-            var makeP = new Makeplaning();
-            Planinig planinig = planingRepository.findOneByDatePlaningAndUser(localDate2, user);
-            if (planinig == null) {
-                planinig = new Planinig();
-                planinig.setFonction(user.getFonction());
-                planinig.setHeureDebut(LocalTime.of(8, 0, 0));
-                planinig.setHeureFin(planinig.getHeureDebut().plusHours(4));
-                planinig.setDatePlaning(localDate2);
-                planinig.setUser(user);
-                planinig.setType_planing(user.getTypeplaning());
-                planingRepository.save(planinig);
+                var makeP = new Makeplaning();
+                Planinig planinig = planingRepository.findOneByDatePlaningAndUser(localDate2, user);
+                if (planinig == null) {
+                    planinig = new Planinig();
+                    planinig.setFonction(user.getFonction());
+                    planinig.setHeureDebut(LocalTime.of(8, 0, 0));
+                    planinig.setHeureFin(planinig.getHeureDebut().plusHours(4));
+                    planinig.setDatePlaning(localDate2);
+                    planinig.setUser(user);
+                    planinig.setType_planing(user.getTypeplaning());
+                    planingRepository.save(planinig);
 
-            }
-            if (planinig != null) {
-                makeP.setFonction(planinig.getFonction().getTypeFonction());
-                makeP.setHeure_debut(planinig.getHeureDebut().toString());
-                makeP.setHeure_fin(planinig.getHeureFin().toString());
-                makeP.setPlaning_id(planinig.getId());
-                makeP.setDate_planing(localdate);
-                var minFin = planinig.getHeureFin().getHour() * 60 + planinig.getHeureFin().getMinute();
-                var minDebut = planinig.getHeureDebut().getHour() * 60 + planinig.getHeureDebut().getMinute();
+                }
+                if (planinig != null) {
+                    makeP.setFonction(planinig.getFonction().getTypeFonction());
+                    makeP.setHeure_debut(planinig.getHeureDebut().toString());
+                    makeP.setHeure_fin(planinig.getHeureFin().toString());
+                    makeP.setPlaning_id(planinig.getId());
+                    makeP.setDate_planing(localdate);
+                    var minFin = planinig.getHeureFin().getHour() * 60 + planinig.getHeureFin().getMinute();
+                    var minDebut = planinig.getHeureDebut().getHour() * 60 + planinig.getHeureDebut().getMinute();
 
-                total_heure += (minFin - minDebut);
+                    total_heure += (minFin - minDebut);
+                }
+                makeP.setDate_planing(localDate2.format(dateTimeFormatter));
+                makeplanings.add(makeP);
+            } else {
+                var makeP = new Makeplaning();
+                makeP.setDate_planing(localDate2.format(dateTimeFormatter));
+                makeplanings.add(makeP);
             }
-            makeP.setDate_planing(localDate2.format(dateTimeFormatter));
-            makeplanings.add(makeP);
-        }else{
-            var makeP = new Makeplaning();
-            makeP.setDate_planing(localDate2.format(dateTimeFormatter));
-            makeplanings.add(makeP);
         }
-    }
         return makeplanings;
     }
 }
