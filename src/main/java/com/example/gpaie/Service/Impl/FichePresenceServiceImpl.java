@@ -64,11 +64,14 @@ public class FichePresenceServiceImpl implements FichePresenceService{
         List<FichePresence>fichePresences=new ArrayList<>();
         DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
         for (User user : users) {
-            FichePresence fichePresence=fichePresenceRepository.findByUserAndDatePresence(user, LocalDate.parse(date, dateTimeFormatter)).get();
-            if(fichePresence==null){
+            FichePresence fichePresence;
+            var fichePresenceO=fichePresenceRepository.findByUserAndDatePresence(user, LocalDate.parse(date, dateTimeFormatter));
+            if(!fichePresenceO.isPresent()){
                 fichePresence=new FichePresence();
                 fichePresence.setUser(user);
                 fichePresence.setDatePresence(LocalDate.parse(date, dateTimeFormatter));
+            }else{
+                fichePresence=fichePresenceO.get();
             }
             fichePresences.add(fichePresence);
         }
@@ -103,6 +106,6 @@ public class FichePresenceServiceImpl implements FichePresenceService{
     public FichePresenceModel findOneByEmployeBetwennDate(Long user_id, String dateDebut) {
         DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
         var user=userRepository.findById(user_id).get();
-        return fichePresenceRepository.findByUserAndDatePresence(user,LocalDate.parse(dateDebut, dateTimeFormatter)).map(this::fichePresenceToFichePresenceModel).get();
+        return fichePresenceRepository.findByUserAndDatePresence(user,LocalDate.parse(dateDebut, dateTimeFormatter)).map(this::fichePresenceToFichePresenceModel).orElseThrow();
     }
 }

@@ -3,9 +3,18 @@ package com.example.gpaie.Model;
 public class Makeplaning {
     private long planing_id;
     private String fonction;
+    private int typeplaning;
     private String heure_debut;
     private String heure_fin;
     private String date_planing;
+
+    public int getTypeplaning() {
+        return this.typeplaning;
+    }
+
+    public void setTypeplaning(int typeplaning) {
+        this.typeplaning = typeplaning;
+    }
 
     public long getPlaning_id() {
         return this.planing_id;

@@ -33,10 +33,11 @@ public class AbsenceServiceImpl implements AbsenceService{
         if(absenceModel.getId()== null){
             absence=new Absence();  
             absence.setUser(userRepository.findById(absenceModel.getUser_id()).get());
-            absence.setDateAbsence(LocalDate.parse(absenceModel.getDateAbsence(), dateTimeFormatter));
         }else{
             absence =absenceRepository.findById(absenceModel.getId()).get();
         }
+        absence.setDateDebut(LocalDate.parse(absenceModel.getDateDebut(), dateTimeFormatter));
+        absence.setDateFin(LocalDate.parse(absenceModel.getDateFin(), dateTimeFormatter));
         absence.setMotif(absenceModel.getMotif());
         absenceRepository.saveAndFlush(absence);
         return absenceModel;

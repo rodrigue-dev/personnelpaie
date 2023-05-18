@@ -90,7 +90,8 @@ public class PlaningServiceImpl implements PlaningService {
     public void delete(Long id) {
         var planing = planingRepository.findById(id).get();
         var conge = new Absence();
-        conge.setDateAbsence(planing.getDatePlaning());
+        conge.setDateDebut(planing.getDatePlaning());
+        conge.setDateFin(planing.getDatePlaning());
         conge.setUser(planing.getUser());
         congeRepository.save(conge);
         planingRepository.deleteById(id);
@@ -120,7 +121,7 @@ public class PlaningServiceImpl implements PlaningService {
                         List<Planinig> planinigs = planingRepository.findAllByUserAndDatePlaningBetween(user,
                                 days.stream().findFirst().get(),
                                 days.stream().sorted(Comparator.reverseOrder()).findFirst().get());
-                        Absence absence = congeRepository.findOneByDateAbsenceAndUser(localDate2, user);
+                        Absence absence = congeRepository.findbetwenDate(localDate2, user);
                         var fichePresenceOptionel = fichePresenceRepository.findByUserAndDatePresence(user,
                                 localDate2);
                         FichePresence fichePresence = null;
@@ -155,8 +156,9 @@ public class PlaningServiceImpl implements PlaningService {
                             makeP.setHeure_debut(start.toString());
                             makeP.setHeure_fin(stop.toString());
                             makeP.setPlaning_id(planinig.getId());
-                            var minFin = start.getHour() * 60 + stop.getMinute();
-                            var minDebut = start.getHour() * 60 + stop.getMinute();
+                            makeP.setTypeplaning(planinig.getUser().getTypeplaning());
+                            var minFin = stop.getHour() * 60 + stop.getMinute();
+                            var minDebut = start.getHour() * 60 + start.getMinute();
                             nb_user += 1;
                             total_heure += (minFin - minDebut);
                         }
@@ -168,7 +170,7 @@ public class PlaningServiceImpl implements PlaningService {
                     } else if (user.getTypeplaning() == 1) { // Mitemps
                         var makeP = new Makeplaning();
                         Planinig planinig = planingRepository.findOneByDatePlaningAndUser(localDate2, user);
-                        Absence absence = congeRepository.findOneByDateAbsenceAndUser(localDate2, user);
+                        Absence absence = congeRepository.findbetwenDate(localDate2, user);
                         var fichePresenceOptionel = fichePresenceRepository.findByUserAndDatePresence(user,
                                 localDate2);
                         FichePresence fichePresence = null;
@@ -201,8 +203,9 @@ public class PlaningServiceImpl implements PlaningService {
                             makeP.setHeure_debut(start.toString());
                             makeP.setHeure_fin(stop.toString());
                             makeP.setPlaning_id(planinig.getId());
-                            var minFin = start.getHour() * 60 + stop.getMinute();
-                            var minDebut = start.getHour() * 60 + stop.getMinute();
+                            makeP.setTypeplaning(planinig.getUser().getTypeplaning());
+                            var minFin = stop.getHour() * 60 + stop.getMinute();
+                            var minDebut = start.getHour() * 60 + start.getMinute();
 
                             total_heure += (minFin - minDebut);
                         }
@@ -211,7 +214,7 @@ public class PlaningServiceImpl implements PlaningService {
                     } else { // temps plein
                         var makeP = new Makeplaning();
                         Planinig planinig = planingRepository.findOneByDatePlaningAndUser(localDate2, user);
-                        Absence absence = congeRepository.findOneByDateAbsenceAndUser(localDate2, user);
+                        Absence absence = congeRepository.findbetwenDate(localDate2, user);
                         var fichePresenceOptionel = fichePresenceRepository.findByUserAndDatePresence(user,
                                 localDate2);
                         FichePresence fichePresence = null;
@@ -244,6 +247,7 @@ public class PlaningServiceImpl implements PlaningService {
                             makeP.setHeure_debut(start.toString());
                             makeP.setHeure_fin(stop.toString());
                             makeP.setPlaning_id(planinig.getId());
+                            makeP.setTypeplaning(planinig.getUser().getTypeplaning());
                             var minFin = stop.getHour() * 60 + stop.getMinute();
                             var minDebut = start.getHour() * 60 + start.getMinute();
 

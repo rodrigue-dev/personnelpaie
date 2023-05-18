@@ -7,7 +7,8 @@ public class AbsenceModel {
     private Long id;
     private Long user_id;
     private String motif;
-    private String dateAbsence;
+    private String dateDebut;
+    private String dateFin;
     private String user_name;
 
     public AbsenceModel() {
@@ -18,7 +19,8 @@ public class AbsenceModel {
         this.motif=absence.getMotif();
         this.user_name=absence.getUser().getNom()+ " "+absence.getUser().getPrenom();
         this.user_id=absence.getUser().getId();
-        this.dateAbsence=absence.getDateAbsence().toString();
+        this.dateDebut=absence.getDateDebut().toString();
+        this.dateFin=absence.getDateFin().toString();
     }
     public Long getId() {
         return this.id;
@@ -52,12 +54,20 @@ public class AbsenceModel {
         this.motif = motif;
     }
 
-    public String getDateAbsence() {
-        return this.dateAbsence;
+    public String getDateDebut() {
+        return this.dateDebut;
     }
 
-    public void setDateAbsence(String dateAbsence) {
-        this.dateAbsence = dateAbsence;
+    public void setDateDebut(String dateDebut) {
+        this.dateDebut = dateDebut;
+    }
+
+    public String getDateFin() {
+        return this.dateFin;
+    }
+
+    public void setDateFin(String dateFin) {
+        this.dateFin = dateFin;
     }
 
 

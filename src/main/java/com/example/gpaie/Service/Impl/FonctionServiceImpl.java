@@ -64,12 +64,17 @@ public class FonctionServiceImpl implements FonctionService{
     }
     @Override
     public FontionModel addAvantage(fonctionItemRequest aRequest) {
-        System.out.println(aRequest.toString());
-     Fonction fonction=fonctionRepository.findById(aRequest.getFonction_id()).get();
-     Set<Avantage>avantages=aRequest.getItems().stream().map(e->avantageRepository.findById(e).get()).collect(Collectors.toSet());
+     var fonctionOption=fonctionRepository.findById(aRequest.getFonction_id());
+     if(fonctionOption.isPresent()){
+       var fonction=fonctionOption.get();
+           Set<Avantage>avantages=aRequest.getItems().stream().map(e->avantageRepository.findById(e).get()).collect(Collectors.toSet());
     fonction.getAvantages().addAll(avantages);
     fonctionRepository.saveAndFlush(fonction);
      return new FontionModel(fonction);
+     }else{
+        return new FontionModel();
+     }
+  
     }
     @Override
     public FontionModel addDepartement(fonctionItemRequest aRequest) {

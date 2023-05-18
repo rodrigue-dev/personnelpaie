@@ -20,7 +20,8 @@ public class Absence {
     private LocalDateTime createdAt;
     @LastModifiedDate
     private LocalDateTime modifiedAt;
-    private LocalDate dateAbsence;
+    private LocalDate dateDebut;
+    private LocalDate dateFin;
     private String motif;
     @ManyToOne
     private User user;
@@ -65,13 +66,20 @@ public class Absence {
     }
 
 
-    public LocalDate getDateAbsence() {
-        return this.dateAbsence;
+    public LocalDate getDateDebut() {
+        return this.dateDebut;
     }
 
-    public void setDateAbsence(LocalDate dateAbsence) {
-        this.dateAbsence = dateAbsence;
+    public void setDateDebut(LocalDate dateDebut) {
+        this.dateDebut = dateDebut;
     }
 
+    public LocalDate getDateFin() {
+        return this.dateFin;
+    }
+
+    public void setDateFin(LocalDate dateFin) {
+        this.dateFin = dateFin;
+    }
 
 }
