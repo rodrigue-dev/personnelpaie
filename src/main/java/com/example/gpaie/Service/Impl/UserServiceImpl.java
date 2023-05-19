@@ -54,7 +54,7 @@ public class UserServiceImpl implements UserServiceInterface {
         var pass=randonKey(10);
         if (userRequest.getId() == null) {
             user = new User();
-            user.setPassword(passwordEncoder.encode(pass));
+            user.setPassword(passwordEncoder.encode("12345"));
             user.setTypeplaning(userRequest.getTypeplaning());
             sendMail = true;
         } else {

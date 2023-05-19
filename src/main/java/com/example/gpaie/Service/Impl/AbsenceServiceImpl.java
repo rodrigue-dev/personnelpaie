@@ -13,9 +13,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.example.gpaie.Entity.Absence;
+import com.example.gpaie.Entity.Planinig;
 import com.example.gpaie.Entity.User;
 import com.example.gpaie.Model.AbsenceModel;
 import com.example.gpaie.Repository.AbsenceRepository;
+import com.example.gpaie.Repository.PlaningRepository;
 import com.example.gpaie.Repository.UserRepository;
 import com.example.gpaie.Service.AbsenceService;
 @Service
@@ -26,6 +28,8 @@ public class AbsenceServiceImpl implements AbsenceService{
     private AbsenceRepository absenceRepository;
     @Autowired
     private UserRepository userRepository;
+    @Autowired
+    private PlaningRepository planingRepository;
     @Override
     public AbsenceModel save(AbsenceModel absenceModel) {
         Absence absence;
@@ -40,6 +44,10 @@ public class AbsenceServiceImpl implements AbsenceService{
         absence.setDateFin(LocalDate.parse(absenceModel.getDateFin(), dateTimeFormatter));
         absence.setMotif(absenceModel.getMotif());
         absenceRepository.saveAndFlush(absence);
+       var planings= planingRepository.findAllByUserAndDatePlaningBetween(absence.getUser(), absence.getDateDebut(), absence.getDateFin());
+       for (Planinig planinig : planings) {
+        planingRepository.delete(planinig);
+       }
         return absenceModel;
     }
 

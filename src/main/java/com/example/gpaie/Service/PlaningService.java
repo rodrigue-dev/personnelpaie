@@ -32,6 +32,8 @@ public interface PlaningService {
      */
     List<PlaningModel> findAll();
     List<PlaningUserModel> getPlaningWeek(String localdate);
+    List<PlaningUserModel> getPlaningMonth(String localdate);
+    List<LocalDate> getPlaningHeaderMonth(String localdate);
     List<LocalDate> getPlaningHeaderWeek(String localdate);
     List<PlaningModel> getPlaningByUserBetwennDate(Long user_id,String datedebut,String datefin);
     List<Makeplaning> getPlaningByUser(Long user_id,String localdate);

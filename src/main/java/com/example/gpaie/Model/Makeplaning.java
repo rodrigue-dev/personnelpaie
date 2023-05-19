@@ -4,9 +4,22 @@ public class Makeplaning {
     private long planing_id;
     private String fonction;
     private int typeplaning;
+    private boolean ispointe;
     private String heure_debut;
     private String heure_fin;
     private String date_planing;
+
+    public boolean isIspointe() {
+        return this.ispointe;
+    }
+
+    public boolean getIspointe() {
+        return this.ispointe;
+    }
+
+    public void setIspointe(boolean ispointe) {
+        this.ispointe = ispointe;
+    }
 
     public int getTypeplaning() {
         return this.typeplaning;

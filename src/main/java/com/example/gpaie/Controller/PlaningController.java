@@ -52,6 +52,16 @@ public class PlaningController {
     
 		return planingService.getPlaningHeaderWeek(dateString);
 	}
+    @GetMapping("/planings/headers/month/{date_jour}")
+	public List<LocalDate> getPlaningHeaderMonth(@PathVariable("date_jour") String dateString) {
+    
+		return planingService.getPlaningHeaderMonth(dateString);
+	}
+    @GetMapping("/planings/models/month/{date_jour}")
+	public List<PlaningUserModel> getModelMonths(@PathVariable("date_jour") String dateString) {
+        
+		return planingService.getPlaningMonth(dateString);
+	}
     @GetMapping("/planings/{id}")
     public ResponseEntity<PlaningModel> getById(@PathVariable("id") Long id) {
         Optional<PlaningModel> existingItemOptional = planingService.findOne(id);
