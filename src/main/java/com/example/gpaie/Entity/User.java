@@ -16,6 +16,8 @@ import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToOne;
 
 import java.time.LocalDateTime;
+import java.util.HashSet;
+import java.util.Set;
 @Entity
 public class User {
 
@@ -57,8 +59,18 @@ public class User {
     @JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
     private byte[] image;
     private Integer typeplaning;//0 temps-plein 1: mi-temps, 2:student
+    private Set<Integer> dayworks = new HashSet<>();
     public Long getId() {
         return id;
+    }
+
+
+    public Set<Integer> getDayworks() {
+        return this.dayworks;
+    }
+
+    public void setDayworks(Set<Integer> dayworks) {
+        this.dayworks = dayworks;
     }
 
     public Integer getTypeplaning() {

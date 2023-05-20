@@ -105,11 +105,11 @@ public class PlaningServiceImpl implements PlaningService {
 
     @Override
     public List<PlaningUserModel> getPlaningMonth(String localdate) {
-        
+
         DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
-        var date =LocalDate.parse(localdate, dateTimeFormatter);
-        YearMonth yearMonth=YearMonth.of(date.getYear(), date.getMonthValue());
-        List<LocalDate> days=new ArrayList<>();
+        var date = LocalDate.parse(localdate, dateTimeFormatter);
+        YearMonth yearMonth = YearMonth.of(date.getYear(), date.getMonthValue());
+        List<LocalDate> days = new ArrayList<>();
         for (int i = 1; i < yearMonth.atEndOfMonth().getDayOfMonth(); i++) {
             days.add(yearMonth.atDay(i));
         }
@@ -135,7 +135,7 @@ public class PlaningServiceImpl implements PlaningService {
                             fichePresence = fichePresenceRepository.findByUserAndDatePresence(user,
                                     localDate2).get();
                         }
-                        var ispointe=false;
+                        var ispointe = false;
                         LocalTime start = LocalTime.of(8, 0, 0);
                         LocalTime stop = start.plusHours(8);
                         if (fichePresence != null) {
@@ -143,10 +143,11 @@ public class PlaningServiceImpl implements PlaningService {
                                     : fichePresence.getHeureDebut();
                             stop = fichePresence.getHeureFin() == null ? start.plusHours(8)
                                     : fichePresence.getHeureFin();
-                                    ispointe=true;
+                            ispointe = true;
                         }
 
-                        if (planinig == null && absence == null && planinigs.size() < 3) {
+                        if (planinig == null && absence == null) {
+
                             planinig = new Planinig();
                             planinig.setFonction(user.getFonction());
                             planinig.setHeureDebut(start);
@@ -154,7 +155,7 @@ public class PlaningServiceImpl implements PlaningService {
                             planinig.setDatePlaning(localDate2);
                             planinig.setUser(user);
                             planinig.setType_planing(user.getTypeplaning());
-                           
+                            planinig.setIsPointe(ispointe);
                             planingRepository.save(planinig);
 
                         }
@@ -168,7 +169,10 @@ public class PlaningServiceImpl implements PlaningService {
                             var minFin = stop.getHour() * 60 + stop.getMinute();
                             var minDebut = start.getHour() * 60 + start.getMinute();
                             nb_user += 1;
-                            total_heure += (minFin - minDebut);
+                            if (ispointe) {
+                                total_heure += (minFin - minDebut);
+                            }
+
                         }
                         makeP.setDate_planing(localDate2.format(dateTimeFormatter));
                         if (nb_user <= 3) {
@@ -186,7 +190,7 @@ public class PlaningServiceImpl implements PlaningService {
                             fichePresence = fichePresenceRepository.findByUserAndDatePresence(user,
                                     localDate2).get();
                         }
-                        var ispointe=false;
+                        var ispointe = false;
                         LocalTime start = LocalTime.of(8, 0, 0);
                         LocalTime stop = start.plusHours(4);
                         if (fichePresence != null) {
@@ -194,7 +198,7 @@ public class PlaningServiceImpl implements PlaningService {
                                     : fichePresence.getHeureDebut();
                             stop = fichePresence.getHeureFin() == null ? start.plusHours(4)
                                     : fichePresence.getHeureFin();
-                                    ispointe=true;
+                            ispointe = true;
 
                         }
                         if (planinig == null && absence == null) {
@@ -205,6 +209,7 @@ public class PlaningServiceImpl implements PlaningService {
                             planinig.setDatePlaning(localDate2);
                             planinig.setUser(user);
                             planinig.setType_planing(user.getTypeplaning());
+                            planinig.setIsPointe(ispointe);
                             planingRepository.save(planinig);
 
                         }
@@ -217,8 +222,9 @@ public class PlaningServiceImpl implements PlaningService {
                             makeP.setIspointe(ispointe);
                             var minFin = stop.getHour() * 60 + stop.getMinute();
                             var minDebut = start.getHour() * 60 + start.getMinute();
-
-                            total_heure += (minFin - minDebut);
+                            if (ispointe) {
+                                total_heure += (minFin - minDebut);
+                            }
                         }
                         makeP.setDate_planing(localDate2.format(dateTimeFormatter));
                         makeplanings.add(makeP);
@@ -233,7 +239,7 @@ public class PlaningServiceImpl implements PlaningService {
                             fichePresence = fichePresenceRepository.findByUserAndDatePresence(user,
                                     localDate2).get();
                         }
-                        var ispointe=false;
+                        var ispointe = false;
                         LocalTime start = LocalTime.of(8, 0, 0);
                         LocalTime stop = start.plusHours(8);
                         if (fichePresence != null) {
@@ -241,7 +247,7 @@ public class PlaningServiceImpl implements PlaningService {
                                     : fichePresence.getHeureDebut();
                             stop = fichePresence.getHeureFin() == null ? start.plusHours(8)
                                     : fichePresence.getHeureFin();
-                                    ispointe=true;
+                            ispointe = true;
 
                         }
                         if (planinig == null && absence == null) {
@@ -252,6 +258,7 @@ public class PlaningServiceImpl implements PlaningService {
                             planinig.setDatePlaning(localDate2);
                             planinig.setUser(user);
                             planinig.setType_planing(user.getTypeplaning());
+                            planinig.setIsPointe(ispointe);
                             planingRepository.save(planinig);
 
                         }
@@ -264,8 +271,9 @@ public class PlaningServiceImpl implements PlaningService {
                             makeP.setIspointe(ispointe);
                             var minFin = stop.getHour() * 60 + stop.getMinute();
                             var minDebut = start.getHour() * 60 + start.getMinute();
-
-                            total_heure += (minFin - minDebut);
+                            if (ispointe) {
+                                total_heure += (minFin - minDebut);
+                            }
                         }
                         makeP.setDate_planing(localDate2.format(dateTimeFormatter));
                         makeplanings.add(makeP);
@@ -289,23 +297,26 @@ public class PlaningServiceImpl implements PlaningService {
         return planingUserModels;
 
     }
+
     @Override
     public List<LocalDate> getPlaningHeaderMonth(String localdate) {
         DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
-        var date =LocalDate.parse(localdate, dateTimeFormatter);
-    YearMonth yearMonth=YearMonth.of(date.getYear(), date.getMonthValue());
-    List<LocalDate> days=new ArrayList<>();
-    for (int i = 1; i < yearMonth.atEndOfMonth().getDayOfMonth(); i++) {
-        days.add(yearMonth.atDay(i));
-    }
+        var date = LocalDate.parse(localdate, dateTimeFormatter);
+        YearMonth yearMonth = YearMonth.of(date.getYear(), date.getMonthValue());
+        List<LocalDate> days = new ArrayList<>();
+        for (int i = 1; i < yearMonth.atEndOfMonth().getDayOfMonth(); i++) {
+            days.add(yearMonth.atDay(i));
+        }
         return days;
     }
+
     @Override
     public List<LocalDate> getPlaningHeaderWeek(String localdate) {
         DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
         List<LocalDate> days = DateUtil.getWeekFromDate(LocalDate.parse(localdate, dateTimeFormatter));
         return days;
     }
+
     @Override
     public List<PlaningUserModel> getPlaningWeek(String localdate) {
         System.out.println(localdate);
@@ -333,7 +344,7 @@ public class PlaningServiceImpl implements PlaningService {
                             fichePresence = fichePresenceRepository.findByUserAndDatePresence(user,
                                     localDate2).get();
                         }
-                        var ispointe=false;
+                        var ispointe = false;
                         LocalTime start = LocalTime.of(8, 0, 0);
                         LocalTime stop = start.plusHours(8);
                         if (fichePresence != null) {
@@ -341,11 +352,18 @@ public class PlaningServiceImpl implements PlaningService {
                                     : fichePresence.getHeureDebut();
                             stop = fichePresence.getHeureFin() == null ? start.plusHours(8)
                                     : fichePresence.getHeureFin();
-                                     ispointe=true;
+                            ispointe = true;
 
                         }
+                        var iswork = false;
+                        if (user.getDayworks() != null) {
+                            //user.getDayworks().forEach(System.out::println);
+                            iswork = user.getDayworks().stream()
+                                    .filter(x -> x == localDate2.getDayOfWeek().getValue()).findFirst().isPresent();
+                                    System.out.println(localDate2.getDayOfWeek().getValue()+"- "+iswork);
+                        }
 
-                        if (planinig == null && absence == null && planinigs.size() < 3) {
+                        if (planinig == null && absence == null && iswork) {
                             planinig = new Planinig();
                             planinig.setFonction(user.getFonction());
                             planinig.setHeureDebut(start);
@@ -356,8 +374,8 @@ public class PlaningServiceImpl implements PlaningService {
                             planingRepository.save(planinig);
 
                         }
-                        if (planinig != null) {
-                            makeP.setFonction(planinig.getFonction().getTypeFonction());
+                        if (planinig != null && iswork) {
+                           
                             makeP.setHeure_debut(start.toString());
                             makeP.setHeure_fin(stop.toString());
                             makeP.setPlaning_id(planinig.getId());
@@ -366,13 +384,19 @@ public class PlaningServiceImpl implements PlaningService {
                             var minFin = stop.getHour() * 60 + stop.getMinute();
                             var minDebut = start.getHour() * 60 + start.getMinute();
                             nb_user += 1;
-                            total_heure += (minFin - minDebut);
+                            if (ispointe) {
+                                total_heure += (minFin - minDebut);
+                            }
+                            makeP.setDate_planing(localDate2.format(dateTimeFormatter));
+                            if (iswork) {
+                                makeP.setFonction(planinig.getFonction().getTypeFonction());
+                            }
                         }
                         makeP.setDate_planing(localDate2.format(dateTimeFormatter));
-                        if (nb_user <= 3) {
+                       
 
                             makeplanings.add(makeP);
-                        }
+                       
                     } else if (user.getTypeplaning() == 1) { // Mitemps
                         var makeP = new Makeplaning();
                         Planinig planinig = planingRepository.findOneByDatePlaningAndUser(localDate2, user);
@@ -384,7 +408,7 @@ public class PlaningServiceImpl implements PlaningService {
                             fichePresence = fichePresenceRepository.findByUserAndDatePresence(user,
                                     localDate2).get();
                         }
-                        var ispointe=false;
+                        var ispointe = false;
                         LocalTime start = LocalTime.of(8, 0, 0);
                         LocalTime stop = start.plusHours(4);
                         if (fichePresence != null) {
@@ -392,7 +416,7 @@ public class PlaningServiceImpl implements PlaningService {
                                     : fichePresence.getHeureDebut();
                             stop = fichePresence.getHeureFin() == null ? start.plusHours(4)
                                     : fichePresence.getHeureFin();
-                                    ispointe=true;
+                            ispointe = true;
                         }
                         if (planinig == null && absence == null) {
                             planinig = new Planinig();
@@ -414,8 +438,9 @@ public class PlaningServiceImpl implements PlaningService {
                             makeP.setIspointe(ispointe);
                             var minFin = stop.getHour() * 60 + stop.getMinute();
                             var minDebut = start.getHour() * 60 + start.getMinute();
-
-                            total_heure += (minFin - minDebut);
+                            if (ispointe) {
+                                total_heure += (minFin - minDebut);
+                            }
                         }
                         makeP.setDate_planing(localDate2.format(dateTimeFormatter));
                         makeplanings.add(makeP);
@@ -430,7 +455,7 @@ public class PlaningServiceImpl implements PlaningService {
                             fichePresence = fichePresenceRepository.findByUserAndDatePresence(user,
                                     localDate2).get();
                         }
-                        var ispointe=false;
+                        var ispointe = false;
                         LocalTime start = LocalTime.of(8, 0, 0);
                         LocalTime stop = start.plusHours(8);
                         if (fichePresence != null) {
@@ -438,7 +463,7 @@ public class PlaningServiceImpl implements PlaningService {
                                     : fichePresence.getHeureDebut();
                             stop = fichePresence.getHeureFin() == null ? start.plusHours(8)
                                     : fichePresence.getHeureFin();
-                                    ispointe=true;
+                            ispointe = true;
 
                         }
                         if (planinig == null && absence == null) {
@@ -461,8 +486,9 @@ public class PlaningServiceImpl implements PlaningService {
                             makeP.setIspointe(ispointe);
                             var minFin = stop.getHour() * 60 + stop.getMinute();
                             var minDebut = start.getHour() * 60 + start.getMinute();
-
-                            total_heure += (minFin - minDebut);
+                            if (ispointe) {
+                                total_heure += (minFin - minDebut);
+                            }
                         }
                         makeP.setDate_planing(localDate2.format(dateTimeFormatter));
                         makeplanings.add(makeP);
@@ -486,6 +512,7 @@ public class PlaningServiceImpl implements PlaningService {
         return planingUserModels;
 
     }
+
     @Override
     public List<PlaningModel> getPlaningByUserBetwennDate(Long user_id, String datedebut, String datefin) {
         DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");

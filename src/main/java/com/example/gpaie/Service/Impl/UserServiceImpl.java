@@ -51,6 +51,7 @@ public class UserServiceImpl implements UserServiceInterface {
     public UserModel save(UserModel userRequest) {
         User user;
         boolean sendMail = false;
+        System.out.println(userRequest.getDayworks());
         var pass=randonKey(10);
         if (userRequest.getId() == null) {
             user = new User();
@@ -78,14 +79,14 @@ public class UserServiceImpl implements UserServiceInterface {
             user.setImageUrl(photo);
             user.setImage(fileService.convertImageByte(userRequest.getImageFile()));
         }
-        User u=userRepository.saveAndFlush(user);
-        if(u.getTypeplaning()==0){
-
-        }else if(u.getTypeplaning()==1){
-
-        }else{
-
+        if(userRequest.getTypeplaning()==2){
+           /*  for (int i = 0; i < userRequest.getDayworks().length; i++) {
+                user.getDayworks().add((Integer) userRequest.getDayworks()[i]);
+            } */
+            user.setDayworks(userRequest.getDayworks());
         }
+        User u=userRepository.saveAndFlush(user);
+        
         if (sendMail) {
             EmailDetails emailDetails = new EmailDetails();
             emailDetails.setRecipient(user.getEmail());

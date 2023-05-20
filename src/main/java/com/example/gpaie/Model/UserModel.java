@@ -1,6 +1,8 @@
 package com.example.gpaie.Model;
 
 import java.io.Serializable;
+import java.util.HashSet;
+import java.util.Set;
 
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
@@ -26,6 +28,7 @@ public class UserModel implements Serializable{
     private String fonction;
     private byte[] image;
     private Integer typeplaning;
+    private Set<Integer> dayworks= new HashSet<>();
     public UserModel() {
     }
 
@@ -46,6 +49,7 @@ public class UserModel implements Serializable{
         this.fonction_id=user.getFonction().getId();
         this.fonction=user.getFonction().getTypeFonction();
         this.typeplaning=user.getTypeplaning();
+        this.dayworks=user.getDayworks();
         
         String fileDownloadUri = ServletUriComponentsBuilder
           .fromCurrentContextPath()
@@ -55,6 +59,18 @@ public class UserModel implements Serializable{
           this.imageFile=fileDownloadUri;
         this.image=user.getImage();
     }
+
+
+
+    public Set<Integer> getDayworks() {
+        return this.dayworks;
+    }
+
+    public void setDayworks(Set<Integer> dayworks) {
+        this.dayworks = dayworks;
+    }
+ 
+
 
     public long getFonction_id() {
         return this.fonction_id;
