@@ -374,7 +374,7 @@ public class PlaningServiceImpl implements PlaningService {
                             planingRepository.save(planinig);
 
                         }
-                        if (planinig != null && iswork) {
+                        if (planinig != null && absence == null && iswork) {
                            
                             makeP.setHeure_debut(start.toString());
                             makeP.setHeure_fin(stop.toString());
@@ -429,7 +429,7 @@ public class PlaningServiceImpl implements PlaningService {
                             planingRepository.save(planinig);
 
                         }
-                        if (planinig != null) {
+                        if (planinig != null && absence == null) {
                             makeP.setFonction(planinig.getFonction().getTypeFonction());
                             makeP.setHeure_debut(start.toString());
                             makeP.setHeure_fin(stop.toString());
@@ -477,7 +477,7 @@ public class PlaningServiceImpl implements PlaningService {
                             planingRepository.save(planinig);
 
                         }
-                        if (planinig != null) {
+                        if (planinig != null && absence == null) {
                             makeP.setFonction(planinig.getFonction().getTypeFonction());
                             makeP.setHeure_debut(start.toString());
                             makeP.setHeure_fin(stop.toString());

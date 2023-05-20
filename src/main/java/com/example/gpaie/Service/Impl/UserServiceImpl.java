@@ -51,8 +51,8 @@ public class UserServiceImpl implements UserServiceInterface {
     public UserModel save(UserModel userRequest) {
         User user;
         boolean sendMail = false;
-        System.out.println(userRequest.getDayworks());
-        var pass=randonKey(10);
+      //  System.out.println(userRequest.getDayworks());
+        var pass = randonKey(10);
         if (userRequest.getId() == null) {
             user = new User();
             user.setPassword(passwordEncoder.encode("12345"));
@@ -74,26 +74,27 @@ public class UserServiceImpl implements UserServiceInterface {
         user.setAuthority(roleRepository.findById(userRequest.getRole()).get());
         user.setDepartement(departementRepository.findById(userRequest.getDepartement_id()).get());
         user.setFonction(fonctionRepository.findById(userRequest.getFonction_id()).get());
-        if(!userRequest.getImageFile().isEmpty()){
-            var photo=fileService.convertImage(userRequest.getImageFile());
-            user.setImageUrl(photo);
-            user.setImage(fileService.convertImageByte(userRequest.getImageFile()));
+        if (userRequest.getImageFile() != null) {
+            if (!userRequest.getImageFile().isEmpty()) {
+                var photo = fileService.convertImage(userRequest.getImageFile());
+                user.setImageUrl(photo);
+                user.setImage(fileService.convertImageByte(userRequest.getImageFile()));
+            }
         }
-        if(userRequest.getTypeplaning()==2){
-           /*  for (int i = 0; i < userRequest.getDayworks().length; i++) {
-                user.getDayworks().add((Integer) userRequest.getDayworks()[i]);
-            } */
+
+        if (userRequest.getTypeplaning() == 2) {
+
             user.setDayworks(userRequest.getDayworks());
         }
-        User u=userRepository.saveAndFlush(user);
-        
+        User u = userRepository.saveAndFlush(user);
+
         if (sendMail) {
             EmailDetails emailDetails = new EmailDetails();
             emailDetails.setRecipient(user.getEmail());
             emailDetails.setSubject("Creation du personnel");
             emailDetails.setMsgBody(
                     "Informations de connexion: Eamil:" + user.getEmail() + " Password: " + pass);
-          //  mailService.sendMail(emailDetails);
+            // mailService.sendMail(emailDetails);
         }
         userRequest.setId(u.getId());
         return userRequest;
@@ -104,7 +105,6 @@ public class UserServiceImpl implements UserServiceInterface {
         return matricule;
     }
 
-
     @Override
     public Optional<UserModel> partialUpdate(UserModel zoneDTO) {
         // TODO Auto-generated method stub
@@ -114,7 +114,7 @@ public class UserServiceImpl implements UserServiceInterface {
     @Override
     public List<UserModel> findAll() {
         return userRepository.findAll().stream()
-                .filter(e->e.isEnabled()).filter(e -> e.getAuthority().getAuthority().isBlank()==false)
+                .filter(e -> e.isEnabled()).filter(e -> e.getAuthority().getAuthority().isBlank() == false)
                 .map(this::userToUserModel).collect(Collectors.toList());
     }
 
@@ -125,11 +125,15 @@ public class UserServiceImpl implements UserServiceInterface {
 
     @Override
     public void delete(Long id) {
-       userRepository.findById(id).ifPresent(e->e.setEnabled(false));
-       userRepository.flush();
-      /*  var paiements=paiementRepository.findAllByUser(userRepository.findById(id).get());
-       paiementRepository.deleteAll(paiements);
-       userRepository.deleteById(id); */
+        userRepository.findById(id).ifPresent(e -> e.setEnabled(false));
+        userRepository.flush();
+        /*
+         * var
+         * paiements=paiementRepository.findAllByUser(userRepository.findById(id).get())
+         * ;
+         * paiementRepository.deleteAll(paiements);
+         * userRepository.deleteById(id);
+         */
     }
 
     public UserModel userToUserModel(User user) {
@@ -174,10 +178,12 @@ public class UserServiceImpl implements UserServiceInterface {
     @Override
     public String resetpassword(String email) {
         var user = userRepository.findByEmail(email);
-        /* for (int i = 0; i < 100; i++) {
-            System.out.println(randonIntKey(10).toLowerCase());
-        } */
-         if (user.isPresent()) {
+        /*
+         * for (int i = 0; i < 100; i++) {
+         * System.out.println(randonIntKey(10).toLowerCase());
+         * }
+         */
+        if (user.isPresent()) {
             var pass = randonKey(10).toLowerCase();
             user.get().setPassword(passwordEncoder.encode(pass));
             userRepository.flush();
@@ -189,7 +195,7 @@ public class UserServiceImpl implements UserServiceInterface {
             return "Message sent";
         } else {
             return "Message not sent";
-        } 
+        }
     }
 
     String randonKey(int size) {
@@ -204,9 +210,10 @@ public class UserServiceImpl implements UserServiceInterface {
                 .toString();
 
     }
+
     String randonIntKey(int size) {
 
-       int leftLimit = 48;
+        int leftLimit = 48;
         int rightLimit = 57;
         Random randomGenerator = new Random();
         return randomGenerator.ints(leftLimit, rightLimit + 1)
@@ -217,20 +224,20 @@ public class UserServiceImpl implements UserServiceInterface {
 
     @Override
     public boolean isEnabledUser(String email) {
-    return  userRepository.findByEmail(email).filter(e->e.isEnabled()).isPresent();
+        return userRepository.findByEmail(email).filter(e -> e.isEnabled()).isPresent();
     }
 
     @Override
     public void sendMail(EmailModel emailModel) {
         for (int i = 0; i < emailModel.getItems().length; i++) {
-            var user=userRepository.findById(emailModel.getItems()[i]).get();
-              EmailDetails emailDetails = new EmailDetails();
-        emailDetails.setRecipient(user.getEmail());
-        emailDetails.setSubject(emailModel.getSubject());
-        emailDetails.setMsgBody(emailModel.getMessage());
-        mailService.sendMail(emailDetails);
+            var user = userRepository.findById(emailModel.getItems()[i]).get();
+            EmailDetails emailDetails = new EmailDetails();
+            emailDetails.setRecipient(user.getEmail());
+            emailDetails.setSubject(emailModel.getSubject());
+            emailDetails.setMsgBody(emailModel.getMessage());
+            mailService.sendMail(emailDetails);
         }
-      
+
     }
 
 }
