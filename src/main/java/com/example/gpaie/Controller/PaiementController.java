@@ -59,7 +59,7 @@ public class PaiementController {
             existingItemOptional=paiementService.calculHeureSupp(month, year,id_user);
             break;
             case 11:
-            existingItemOptional=paiementService.sendMail(month, year);
+            existingItemOptional=paiementService.sendMail(month, year,id_user);
             break;
             case 10:
             existingItemOptional=paiementService.generatePaie(month, year,id_user);

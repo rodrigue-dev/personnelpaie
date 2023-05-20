@@ -128,6 +128,9 @@ public class PlaningServiceImpl implements PlaningService {
                                 days.stream().findFirst().get(),
                                 days.stream().sorted(Comparator.reverseOrder()).findFirst().get());
                         Absence absence = congeRepository.findbetwenDate(localDate2, user);
+                        if(absence !=null){
+                            
+                        }
                         var fichePresenceOptionel = fichePresenceRepository.findByUserAndDatePresence(user,
                                 localDate2);
                         FichePresence fichePresence = null;
@@ -145,9 +148,14 @@ public class PlaningServiceImpl implements PlaningService {
                                     : fichePresence.getHeureFin();
                             ispointe = true;
                         }
-
-                        if (planinig == null && absence == null) {
-
+                        var iswork = false;
+                        if (user.getDayworks() != null) {
+                            //user.getDayworks().forEach(System.out::println);
+                            iswork = user.getDayworks().stream()
+                                    .filter(x -> x == localDate2.getDayOfWeek().getValue()).findFirst().isPresent();
+                                    System.out.println(localDate2.getDayOfWeek().getValue()+"- "+iswork);
+                        }
+                        if (planinig == null && absence == null && iswork) {
                             planinig = new Planinig();
                             planinig.setFonction(user.getFonction());
                             planinig.setHeureDebut(start);
@@ -159,8 +167,9 @@ public class PlaningServiceImpl implements PlaningService {
                             planingRepository.save(planinig);
 
                         }
-                        if (planinig != null) {
-                            makeP.setFonction(planinig.getFonction().getTypeFonction());
+                      
+                        if (planinig != null && absence == null && iswork) {
+                           // makeP.setFonction(planinig.getFonction().getTypeFonction());
                             makeP.setHeure_debut(start.toString());
                             makeP.setHeure_fin(stop.toString());
                             makeP.setPlaning_id(planinig.getId());
@@ -172,13 +181,14 @@ public class PlaningServiceImpl implements PlaningService {
                             if (ispointe) {
                                 total_heure += (minFin - minDebut);
                             }
-
+                            if (iswork) {
+                                makeP.setFonction(planinig.getFonction().getTypeFonction());
+                            }
                         }
+                        
                         makeP.setDate_planing(localDate2.format(dateTimeFormatter));
-                        if (nb_user <= 3) {
-
-                            makeplanings.add(makeP);
-                        }
+                        makeplanings.add(makeP);
+                      
                     } else if (user.getTypeplaning() == 1) { // Mitemps
                         var makeP = new Makeplaning();
                         Planinig planinig = planingRepository.findOneByDatePlaningAndUser(localDate2, user);
@@ -213,7 +223,10 @@ public class PlaningServiceImpl implements PlaningService {
                             planingRepository.save(planinig);
 
                         }
-                        if (planinig != null) {
+                        if(absence !=null){
+                            planingRepository.delete(planinig);;
+                         }
+                        if (planinig != null && absence == null) {
                             makeP.setFonction(planinig.getFonction().getTypeFonction());
                             makeP.setHeure_debut(start.toString());
                             makeP.setHeure_fin(stop.toString());
@@ -262,7 +275,7 @@ public class PlaningServiceImpl implements PlaningService {
                             planingRepository.save(planinig);
 
                         }
-                        if (planinig != null) {
+                        if (planinig != null && absence == null) {
                             makeP.setFonction(planinig.getFonction().getTypeFonction());
                             makeP.setHeure_debut(start.toString());
                             makeP.setHeure_fin(stop.toString());
@@ -393,8 +406,6 @@ public class PlaningServiceImpl implements PlaningService {
                             }
                         }
                         makeP.setDate_planing(localDate2.format(dateTimeFormatter));
-                       
-
                             makeplanings.add(makeP);
                        
                     } else if (user.getTypeplaning() == 1) { // Mitemps

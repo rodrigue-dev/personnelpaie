@@ -17,7 +17,7 @@ public interface PaiementService {
     List<PaiementModel> calculSalaire(int month,int year,Long id_user);
     List<PaiementModel> calculHeureSupp(int month,int year,Long id_user);
     List<PaiementModel> calculPrimeRetenue(int month,int year,Long id_user);
-    List<PaiementModel> sendMail(int month,int year);
+    List<PaiementModel> sendMail(int month,int year,Long id_user);
     List<PaiementModel> generatePaie(int month,int year,Long id_user);
 
     /**

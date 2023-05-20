@@ -546,8 +546,11 @@ public class PaiementServiceImpl implements PaiementService {
     }
 
     @Override
-    public List<PaiementModel> sendMail(int month, int year) {
-        var employes = userRepository.findAll().stream().filter(e->e.isEnabled()).collect(Collectors.toList());
+    public List<PaiementModel> sendMail(int month, int year,Long id_user) {
+
+        var employes = userRepository.findAll().stream()
+        .filter(e->e.isEnabled()).filter(e->e.getId() !=id_user)
+        .collect(Collectors.toList());
         List<PaiementModel> paiementModels = new ArrayList<>();
         for (User user : employes) {
             var paie = paiementRepository.findOneByMonthAndYearAndUser(month, year, user);

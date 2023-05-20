@@ -43,9 +43,10 @@ public class AbsenceServiceImpl implements AbsenceService{
         absence.setDateDebut(LocalDate.parse(absenceModel.getDateDebut(), dateTimeFormatter));
         absence.setDateFin(LocalDate.parse(absenceModel.getDateFin(), dateTimeFormatter));
         absence.setMotif(absenceModel.getMotif());
-        absenceRepository.saveAndFlush(absence);
-       var planings= planingRepository.findAllByUserAndDatePlaningBetween(absence.getUser(), absence.getDateDebut(), absence.getDateFin());
+       var ab= absenceRepository.saveAndFlush(absence);
+       var planings= planingRepository.finByUserAndDatePlaningBetween(ab.getDateDebut(), ab.getDateFin(),ab.getUser());
        for (Planinig planinig : planings) {
+        System.out.println(planinig.toString());
         planingRepository.delete(planinig);
        }
         return absenceModel;
