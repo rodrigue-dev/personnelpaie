@@ -586,4 +586,17 @@ public class PaiementServiceImpl implements PaiementService {
     public List<PaiementModel> paiementByUser(Long userid) {
         return paiementRepository.findAllByUser(userRepository.findById(userid).get()).stream().map(this::paiementToPaiementModel).collect(Collectors.toList());
     }
+
+    @Override
+    public PaiementModel sendBulletn(Long id) {
+        var paie = paiementRepository.findById(id);
+        var emailDetail = new EmailDetails();
+        emailDetail.setMsgBody("");
+        emailDetail.setRecipient(paie.get().getUser().getEmail());
+        emailDetail.setSubject("Bulletin de paie");
+        emailDetail.setAttachment(filesPath + "/" + id + ".pdf");
+        sendMailWithAttachment(emailDetail);
+        var paiementModel = new PaiementModel(paie.get());
+        return paiementModel;
+    }
 }

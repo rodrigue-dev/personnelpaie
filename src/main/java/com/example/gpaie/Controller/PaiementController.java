@@ -42,6 +42,10 @@ public class PaiementController {
 	public List<PaiementModel> findAllByUser(@PathVariable("id") Long id) {
 		return paiementService.paiementByUser(id);
 	}
+    @GetMapping({ "/paiements/sendbulletin/{id}" })
+	public PaiementModel sendbulletin(@PathVariable("id") Long id) {
+		return paiementService.sendBulletn(id);
+	}
     @GetMapping("/paiements/{id}")
     public ResponseEntity<PaiementModel> getById(@PathVariable("id") Long id) {
         Optional<PaiementModel> existingItemOptional = paiementService.findOne(id);
