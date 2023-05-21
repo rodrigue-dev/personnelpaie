@@ -146,11 +146,12 @@ public class PlaningServiceImpl implements PlaningService {
                                     : fichePresence.getHeureDebut();
                             stop = fichePresence.getHeureFin() == null ? start.plusHours(8)
                                     : fichePresence.getHeureFin();
-                            ispointe = true;
+                                    if(fichePresence.getHeureFin() !=null){
+                                        ispointe = true;  
+                                      }
                         }
                         var iswork = false;
                         if (user.getDayworks() != null) {
-                            //user.getDayworks().forEach(System.out::println);
                             iswork = user.getDayworks().stream()
                                     .filter(x -> x == localDate2.getDayOfWeek().getValue()).findFirst().isPresent();
                                     System.out.println(localDate2.getDayOfWeek().getValue()+"- "+iswork);
@@ -195,20 +196,23 @@ public class PlaningServiceImpl implements PlaningService {
                         Absence absence = congeRepository.findbetwenDate(localDate2, user);
                         var fichePresenceOptionel = fichePresenceRepository.findByUserAndDatePresence(user,
                                 localDate2);
-                        FichePresence fichePresence = null;
+                        FichePresence fichePresence_m = null;
                         if (fichePresenceOptionel.isPresent()) {
-                            fichePresence = fichePresenceRepository.findByUserAndDatePresence(user,
+                            fichePresence_m = fichePresenceRepository.findByUserAndDatePresence(user,
                                     localDate2).get();
                         }
-                        var ispointe = false;
+                        var ispointe_m = false;
                         LocalTime start = LocalTime.of(8, 0, 0);
                         LocalTime stop = start.plusHours(4);
-                        if (fichePresence != null) {
-                            start = fichePresence.getHeureDebut() == null ? LocalTime.of(8, 0, 0)
-                                    : fichePresence.getHeureDebut();
-                            stop = fichePresence.getHeureFin() == null ? start.plusHours(4)
-                                    : fichePresence.getHeureFin();
-                            ispointe = true;
+                        if (fichePresence_m != null) {
+                            start = fichePresence_m.getHeureDebut() == null ? LocalTime.of(8, 0, 0)
+                                    : fichePresence_m.getHeureDebut();
+                            stop = fichePresence_m.getHeureFin() == null ? start.plusHours(4)
+                                    : fichePresence_m.getHeureFin();
+                                
+                                    if(fichePresence_m.getHeureFin() !=null){
+                                        ispointe_m = true;  
+                                      }
 
                         }
                         if (planinig == null && absence == null) {
@@ -219,7 +223,7 @@ public class PlaningServiceImpl implements PlaningService {
                             planinig.setDatePlaning(localDate2);
                             planinig.setUser(user);
                             planinig.setType_planing(user.getTypeplaning());
-                            planinig.setIsPointe(ispointe);
+                            planinig.setIsPointe(ispointe_m);
                             planingRepository.save(planinig);
 
                         }
@@ -232,10 +236,10 @@ public class PlaningServiceImpl implements PlaningService {
                             makeP.setHeure_fin(stop.toString());
                             makeP.setPlaning_id(planinig.getId());
                             makeP.setTypeplaning(planinig.getUser().getTypeplaning());
-                            makeP.setIspointe(ispointe);
+                            makeP.setIspointe(ispointe_m);
                             var minFin = stop.getHour() * 60 + stop.getMinute();
                             var minDebut = start.getHour() * 60 + start.getMinute();
-                            if (ispointe) {
+                            if (ispointe_m) {
                                 total_heure += (minFin - minDebut);
                             }
                         }
@@ -247,20 +251,23 @@ public class PlaningServiceImpl implements PlaningService {
                         Absence absence = congeRepository.findbetwenDate(localDate2, user);
                         var fichePresenceOptionel = fichePresenceRepository.findByUserAndDatePresence(user,
                                 localDate2);
-                        FichePresence fichePresence = null;
+                        FichePresence fichePresence_p = null;
                         if (fichePresenceOptionel.isPresent()) {
-                            fichePresence = fichePresenceRepository.findByUserAndDatePresence(user,
+                            fichePresence_p = fichePresenceRepository.findByUserAndDatePresence(user,
                                     localDate2).get();
                         }
-                        var ispointe = false;
+                        var ispointe_p = false;
                         LocalTime start = LocalTime.of(8, 0, 0);
                         LocalTime stop = start.plusHours(8);
-                        if (fichePresence != null) {
-                            start = fichePresence.getHeureDebut() == null ? LocalTime.of(8, 0, 0)
-                                    : fichePresence.getHeureDebut();
-                            stop = fichePresence.getHeureFin() == null ? start.plusHours(8)
-                                    : fichePresence.getHeureFin();
-                            ispointe = true;
+                        if (fichePresence_p != null) {
+                            start = fichePresence_p.getHeureDebut() == null ? LocalTime.of(8, 0, 0)
+                                    : fichePresence_p.getHeureDebut();
+                            stop = fichePresence_p.getHeureFin() == null ? start.plusHours(8)
+                                    : fichePresence_p.getHeureFin();
+                                    if(fichePresence_p.getHeureFin() !=null){
+                                      ispointe_p = true;  
+                                    }
+                                    
 
                         }
                         if (planinig == null && absence == null) {
@@ -271,7 +278,7 @@ public class PlaningServiceImpl implements PlaningService {
                             planinig.setDatePlaning(localDate2);
                             planinig.setUser(user);
                             planinig.setType_planing(user.getTypeplaning());
-                            planinig.setIsPointe(ispointe);
+                            planinig.setIsPointe(ispointe_p);
                             planingRepository.save(planinig);
 
                         }
@@ -281,10 +288,10 @@ public class PlaningServiceImpl implements PlaningService {
                             makeP.setHeure_fin(stop.toString());
                             makeP.setPlaning_id(planinig.getId());
                             makeP.setTypeplaning(planinig.getUser().getTypeplaning());
-                            makeP.setIspointe(ispointe);
+                            makeP.setIspointe(ispointe_p);
                             var minFin = stop.getHour() * 60 + stop.getMinute();
                             var minDebut = start.getHour() * 60 + start.getMinute();
-                            if (ispointe) {
+                            if (ispointe_p) {
                                 total_heure += (minFin - minDebut);
                             }
                         }
@@ -365,7 +372,9 @@ public class PlaningServiceImpl implements PlaningService {
                                     : fichePresence.getHeureDebut();
                             stop = fichePresence.getHeureFin() == null ? start.plusHours(8)
                                     : fichePresence.getHeureFin();
-                            ispointe = true;
+                                    if(fichePresence.getHeureFin() !=null){
+                                        ispointe = true;  
+                                      }
 
                         }
                         var iswork = false;
@@ -427,7 +436,9 @@ public class PlaningServiceImpl implements PlaningService {
                                     : fichePresence.getHeureDebut();
                             stop = fichePresence.getHeureFin() == null ? start.plusHours(4)
                                     : fichePresence.getHeureFin();
-                            ispointe = true;
+                                    if(fichePresence.getHeureFin() !=null){
+                                        ispointe = true;  
+                                      }
                         }
                         if (planinig == null && absence == null) {
                             planinig = new Planinig();
@@ -474,7 +485,9 @@ public class PlaningServiceImpl implements PlaningService {
                                     : fichePresence.getHeureDebut();
                             stop = fichePresence.getHeureFin() == null ? start.plusHours(8)
                                     : fichePresence.getHeureFin();
-                            ispointe = true;
+                                    if(fichePresence.getHeureFin() !=null){
+                                        ispointe = true;  
+                                      }
 
                         }
                         if (planinig == null && absence == null) {

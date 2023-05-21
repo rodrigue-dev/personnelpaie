@@ -23,6 +23,7 @@ public class FichePresence {
     private LocalDate datePresence;
     private LocalTime heureDebut;
     private LocalTime heureFin;
+    private boolean ispointe;
     @ManyToOne
     private User user;
     public Long getId() {
@@ -31,6 +32,18 @@ public class FichePresence {
 
     public void setId(Long id) {
         this.id = id;
+    }
+
+    public boolean isIspointe() {
+        return this.ispointe;
+    }
+
+    public boolean getIspointe() {
+        return this.ispointe;
+    }
+
+    public void setIspointe(boolean ispointe) {
+        this.ispointe = ispointe;
     }
 
     public User getUser() {
