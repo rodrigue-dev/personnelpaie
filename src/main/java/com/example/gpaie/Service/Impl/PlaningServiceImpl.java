@@ -127,10 +127,8 @@ public class PlaningServiceImpl implements PlaningService {
                         List<Planinig> planinigs = planingRepository.findAllByUserAndDatePlaningBetween(user,
                                 days.stream().findFirst().get(),
                                 days.stream().sorted(Comparator.reverseOrder()).findFirst().get());
-                        Absence absence = congeRepository.findbetwenDate(localDate2, user);
-                        if(absence !=null){
-                            
-                        }
+                        var absence = congeRepository.findbetwenDate(localDate2, user);
+                       
                         var fichePresenceOptionel = fichePresenceRepository.findByUserAndDatePresence(user,
                                 localDate2);
                         FichePresence fichePresence = null;
@@ -156,7 +154,7 @@ public class PlaningServiceImpl implements PlaningService {
                                     .filter(x -> x == localDate2.getDayOfWeek().getValue()).findFirst().isPresent();
                                     System.out.println(localDate2.getDayOfWeek().getValue()+"- "+iswork);
                         }
-                        if (planinig == null && absence == null && iswork) {
+                        if (planinig == null && absence.isEmpty() && iswork) {
                             planinig = new Planinig();
                             planinig.setFonction(user.getFonction());
                             planinig.setHeureDebut(start);
@@ -169,7 +167,7 @@ public class PlaningServiceImpl implements PlaningService {
 
                         }
                       
-                        if (planinig != null && absence == null && iswork) {
+                        if (planinig != null && absence.isEmpty() && iswork) {
                            // makeP.setFonction(planinig.getFonction().getTypeFonction());
                             makeP.setHeure_debut(start.toString());
                             makeP.setHeure_fin(stop.toString());
@@ -193,7 +191,7 @@ public class PlaningServiceImpl implements PlaningService {
                     } else if (user.getTypeplaning() == 1) { // Mitemps
                         var makeP = new Makeplaning();
                         Planinig planinig = planingRepository.findOneByDatePlaningAndUser(localDate2, user);
-                        Absence absence = congeRepository.findbetwenDate(localDate2, user);
+                        var absence = congeRepository.findbetwenDate(localDate2, user);
                         var fichePresenceOptionel = fichePresenceRepository.findByUserAndDatePresence(user,
                                 localDate2);
                         FichePresence fichePresence_m = null;
@@ -215,7 +213,7 @@ public class PlaningServiceImpl implements PlaningService {
                                       }
 
                         }
-                        if (planinig == null && absence == null) {
+                        if (planinig == null && absence.isEmpty()) {
                             planinig = new Planinig();
                             planinig.setFonction(user.getFonction());
                             planinig.setHeureDebut(start);
@@ -227,10 +225,8 @@ public class PlaningServiceImpl implements PlaningService {
                             planingRepository.save(planinig);
 
                         }
-                        if(absence !=null){
-                            planingRepository.delete(planinig);;
-                         }
-                        if (planinig != null && absence == null) {
+                       
+                        if (planinig != null && absence.isEmpty()) {
                             makeP.setFonction(planinig.getFonction().getTypeFonction());
                             makeP.setHeure_debut(start.toString());
                             makeP.setHeure_fin(stop.toString());
@@ -248,7 +244,7 @@ public class PlaningServiceImpl implements PlaningService {
                     } else { // temps plein
                         var makeP = new Makeplaning();
                         Planinig planinig = planingRepository.findOneByDatePlaningAndUser(localDate2, user);
-                        Absence absence = congeRepository.findbetwenDate(localDate2, user);
+                        var absence = congeRepository.findbetwenDate(localDate2, user);
                         var fichePresenceOptionel = fichePresenceRepository.findByUserAndDatePresence(user,
                                 localDate2);
                         FichePresence fichePresence_p = null;
@@ -270,7 +266,7 @@ public class PlaningServiceImpl implements PlaningService {
                                     
 
                         }
-                        if (planinig == null && absence == null) {
+                        if (planinig == null && absence.isEmpty()) {
                             planinig = new Planinig();
                             planinig.setFonction(user.getFonction());
                             planinig.setHeureDebut(start);
@@ -282,7 +278,7 @@ public class PlaningServiceImpl implements PlaningService {
                             planingRepository.save(planinig);
 
                         }
-                        if (planinig != null && absence == null) {
+                        if (planinig != null && absence.isEmpty()) {
                             makeP.setFonction(planinig.getFonction().getTypeFonction());
                             makeP.setHeure_debut(start.toString());
                             makeP.setHeure_fin(stop.toString());
@@ -356,7 +352,7 @@ public class PlaningServiceImpl implements PlaningService {
                         List<Planinig> planinigs = planingRepository.findAllByUserAndDatePlaningBetween(user,
                                 days.stream().findFirst().get(),
                                 days.stream().sorted(Comparator.reverseOrder()).findFirst().get());
-                        Absence absence = congeRepository.findbetwenDate(localDate2, user);
+                                var absence = congeRepository.findbetwenDate(localDate2, user);
                         var fichePresenceOptionel = fichePresenceRepository.findByUserAndDatePresence(user,
                                 localDate2);
                         FichePresence fichePresence = null;
@@ -385,7 +381,7 @@ public class PlaningServiceImpl implements PlaningService {
                                     System.out.println(localDate2.getDayOfWeek().getValue()+"- "+iswork);
                         }
 
-                        if (planinig == null && absence == null && iswork) {
+                        if (planinig == null && absence.isEmpty() && iswork) {
                             planinig = new Planinig();
                             planinig.setFonction(user.getFonction());
                             planinig.setHeureDebut(start);
@@ -396,7 +392,7 @@ public class PlaningServiceImpl implements PlaningService {
                             planingRepository.save(planinig);
 
                         }
-                        if (planinig != null && absence == null && iswork) {
+                        if (planinig != null && absence.isEmpty() && iswork) {
                            
                             makeP.setHeure_debut(start.toString());
                             makeP.setHeure_fin(stop.toString());
@@ -420,7 +416,7 @@ public class PlaningServiceImpl implements PlaningService {
                     } else if (user.getTypeplaning() == 1) { // Mitemps
                         var makeP = new Makeplaning();
                         Planinig planinig = planingRepository.findOneByDatePlaningAndUser(localDate2, user);
-                        Absence absence = congeRepository.findbetwenDate(localDate2, user);
+                        var absence = congeRepository.findbetwenDate(localDate2, user);
                         var fichePresenceOptionel = fichePresenceRepository.findByUserAndDatePresence(user,
                                 localDate2);
                         FichePresence fichePresence = null;
@@ -440,7 +436,7 @@ public class PlaningServiceImpl implements PlaningService {
                                         ispointe = true;  
                                       }
                         }
-                        if (planinig == null && absence == null) {
+                        if (planinig == null && absence.isEmpty()) {
                             planinig = new Planinig();
                             planinig.setFonction(user.getFonction());
                             planinig.setHeureDebut(start);
@@ -451,7 +447,7 @@ public class PlaningServiceImpl implements PlaningService {
                             planingRepository.save(planinig);
 
                         }
-                        if (planinig != null && absence == null) {
+                        if (planinig != null && absence.isEmpty()) {
                             makeP.setFonction(planinig.getFonction().getTypeFonction());
                             makeP.setHeure_debut(start.toString());
                             makeP.setHeure_fin(stop.toString());
@@ -469,7 +465,7 @@ public class PlaningServiceImpl implements PlaningService {
                     } else { // temps plein
                         var makeP = new Makeplaning();
                         Planinig planinig = planingRepository.findOneByDatePlaningAndUser(localDate2, user);
-                        Absence absence = congeRepository.findbetwenDate(localDate2, user);
+                        var absence = congeRepository.findbetwenDate(localDate2, user);
                         var fichePresenceOptionel = fichePresenceRepository.findByUserAndDatePresence(user,
                                 localDate2);
                         FichePresence fichePresence = null;
@@ -490,7 +486,7 @@ public class PlaningServiceImpl implements PlaningService {
                                       }
 
                         }
-                        if (planinig == null && absence == null) {
+                        if (planinig == null && absence.isEmpty()) {
                             planinig = new Planinig();
                             planinig.setFonction(user.getFonction());
                             planinig.setHeureDebut(start);
@@ -501,7 +497,7 @@ public class PlaningServiceImpl implements PlaningService {
                             planingRepository.save(planinig);
 
                         }
-                        if (planinig != null && absence == null) {
+                        if (planinig != null && absence.isEmpty()) {
                             makeP.setFonction(planinig.getFonction().getTypeFonction());
                             makeP.setHeure_debut(start.toString());
                             makeP.setHeure_fin(stop.toString());
@@ -559,7 +555,8 @@ public class PlaningServiceImpl implements PlaningService {
             if (localDate2.getDayOfWeek().getValue() != 6 && localDate2.getDayOfWeek().getValue() != 7) {
                 var makeP = new Makeplaning();
                 Planinig planinig = planingRepository.findOneByDatePlaningAndUser(localDate2, user);
-                if (planinig == null) {
+                var absence = congeRepository.findbetwenDate(localDate2, user);
+                if (planinig == null && absence.isEmpty()) {
                     planinig = new Planinig();
                     planinig.setFonction(user.getFonction());
                     planinig.setHeureDebut(LocalTime.of(8, 0, 0));

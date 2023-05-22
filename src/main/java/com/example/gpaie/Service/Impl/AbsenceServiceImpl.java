@@ -47,7 +47,7 @@ public class AbsenceServiceImpl implements AbsenceService{
        var planings= planingRepository.finByUserAndDatePlaningBetween(ab.getDateDebut(), ab.getDateFin(),ab.getUser());
        for (Planinig planinig : planings) {
         System.out.println(planinig.toString());
-        planingRepository.delete(planinig);
+        planingRepository.deleteById(planinig.getId());
        }
         return absenceModel;
     }
