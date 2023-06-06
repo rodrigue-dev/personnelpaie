@@ -1,5 +1,7 @@
 package com.example.gpaie.Service.Impl;
 
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.Optional;
 import java.util.Random;
@@ -87,7 +89,8 @@ public class UserServiceImpl implements UserServiceInterface {
             user.setDayworks(userRequest.getDayworks());
         }
         User u = userRepository.saveAndFlush(user);
-
+        DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+        planingService.getPlaningMonth(LocalDate.now().format(dateTimeFormatter));
         if (sendMail) {
             EmailDetails emailDetails = new EmailDetails();
             emailDetails.setRecipient(user.getEmail());

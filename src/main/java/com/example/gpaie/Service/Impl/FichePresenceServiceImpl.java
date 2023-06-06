@@ -1,5 +1,6 @@
 package com.example.gpaie.Service.Impl;
 
+import java.time.Duration;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
@@ -14,11 +15,15 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.example.gpaie.Entity.FichePresence;
+import com.example.gpaie.Entity.HeureSupplementaire;
 import com.example.gpaie.Entity.User;
 import com.example.gpaie.Model.FichePresenceModel;
+import com.example.gpaie.Model.HeureSupplModel;
 import com.example.gpaie.Repository.FichePresenceRepository;
+import com.example.gpaie.Repository.HeureSupplRepository;
 import com.example.gpaie.Repository.UserRepository;
 import com.example.gpaie.Service.FichePresenceService;
+import com.example.gpaie.Service.HeureSupplService;
 @Service
 public class FichePresenceServiceImpl implements FichePresenceService{
     private final Logger log = LoggerFactory.getLogger(UserServiceImpl.class);
@@ -26,6 +31,8 @@ public class FichePresenceServiceImpl implements FichePresenceService{
     private FichePresenceRepository fichePresenceRepository;
     @Autowired
     private UserRepository userRepository;
+    @Autowired
+    private HeureSupplRepository heureSupplService;
     @Override
     public FichePresenceModel save(FichePresenceModel fichePresenceModel) {
         FichePresence fichePresence;
@@ -43,7 +50,45 @@ public class FichePresenceServiceImpl implements FichePresenceService{
         fichePresence.setHeureDebut(LocalTime.parse(fichePresenceModel.getHeureDebut().toString(), timeFormatter));
         }
         if(fichePresenceModel.getHeureFin() !=null){
-             fichePresence.setHeureFin(LocalTime.parse(fichePresenceModel.getHeureFin().toString(), timeFormatter));
+            var heure=LocalTime.parse(fichePresenceModel.getHeureFin().toString(), timeFormatter);
+            var duration=Duration.between(fichePresence.getHeureDebut(),heure).toHours();
+           // if(Duration.between(heure, fichePresence.getHeureDebut())>10)
+           if(fichePresence.getUser().getTypeplaning()==0){
+            fichePresence.setHeureFin(fichePresence.getHeureDebut().plusHours(8));
+            if(duration>8){
+                var heurSupp=new HeureSupplementaire();
+                heurSupp.setUser(fichePresence.getUser());
+                heurSupp.setHeureDebut(fichePresence.getHeureDebut().plusHours(8));
+                heurSupp.setHeureFin(LocalTime.parse(fichePresenceModel.getHeureFin().toString(), timeFormatter));
+                heurSupp.setDateHeureSuppl(fichePresence.getDatePresence());
+                heureSupplService.saveAndFlush(heurSupp);
+               }
+           }else if(fichePresence.getUser().getTypeplaning()==1){
+            fichePresence.setHeureFin(fichePresence.getHeureDebut().plusHours(4));
+            if(duration>8){
+                var heurSupp=new HeureSupplementaire();
+                heurSupp.setUser(fichePresence.getUser());
+                heurSupp.setHeureDebut(fichePresence.getHeureDebut().plusHours(4));
+                heurSupp.setHeureFin(LocalTime.parse(fichePresenceModel.getHeureFin().toString(), timeFormatter));
+                heurSupp.setDateHeureSuppl(fichePresence.getDatePresence());
+                heureSupplService.saveAndFlush(heurSupp);
+               }
+           }else{
+            fichePresence.setHeureFin(fichePresence.getHeureDebut().plusHours(8));
+            if(duration>8){
+                var heurSupp=new HeureSupplementaire();
+                heurSupp.setUser(fichePresence.getUser());
+                heurSupp.setHeureDebut(fichePresence.getHeureDebut().plusHours(8));
+                heurSupp.setHeureFin(LocalTime.parse(fichePresenceModel.getHeureFin().toString(), timeFormatter));
+                heurSupp.setDateHeureSuppl(fichePresence.getDatePresence());
+                heureSupplService.saveAndFlush(heurSupp);
+               }
+           }
+           
+           System.out.println("-----------###############-------------");
+           System.out.println(duration);
+          
+           //  fichePresence.setHeureFin(LocalTime.parse(fichePresenceModel.getHeureFin().toString(), timeFormatter));
         }
         fichePresenceRepository.saveAndFlush(fichePresence);
         return fichePresenceModel;

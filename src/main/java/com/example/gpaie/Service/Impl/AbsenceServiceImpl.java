@@ -20,6 +20,7 @@ import com.example.gpaie.Repository.AbsenceRepository;
 import com.example.gpaie.Repository.PlaningRepository;
 import com.example.gpaie.Repository.UserRepository;
 import com.example.gpaie.Service.AbsenceService;
+import com.example.gpaie.Service.PlaningService;
 @Service
 public class AbsenceServiceImpl implements AbsenceService{
 
@@ -30,6 +31,7 @@ public class AbsenceServiceImpl implements AbsenceService{
     private UserRepository userRepository;
     @Autowired
     private PlaningRepository planingRepository;
+
     @Override
     public AbsenceModel save(AbsenceModel absenceModel) {
         Absence absence;
