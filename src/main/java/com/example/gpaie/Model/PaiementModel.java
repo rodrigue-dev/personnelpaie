@@ -5,6 +5,9 @@ import com.example.gpaie.Entity.Paiement;
 public class PaiementModel {
     private Long id;
     private String datePaie;
+    private String dateDebut;
+    private String dateFin;
+    private String dateCreation;
     private double total_jour;
     private int month;
     private int year;
@@ -52,9 +55,18 @@ public class PaiementModel {
         this.month=item.getMonth();
         this.year=item.getYear();
         this.total_jour=item.getTotal_heure();
-        this.datePaie=item.getDatePaie().toString();
+        this.dateCreation=item.getCreatedAt()==null?null:item.getCreatedAt().toString();
+        this.datePaie=item.getDatePaie()==null?null:item.getDatePaie().toString();
         this.user_name=item.getUser().getNom()+' '+item.getUser().getPrenom();
         this.user_matricule=item.getUser().getMatricule();
+    }
+
+    public String getDateCreation() {
+        return this.dateCreation;
+    }
+
+    public void setDateCreation(String dateCreation) {
+        this.dateCreation = dateCreation;
     }
 
     public double getTotalHeureSuppl() {

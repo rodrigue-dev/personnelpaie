@@ -1,5 +1,6 @@
 package com.example.gpaie.Service.Impl;
 
+import java.time.Duration;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
@@ -27,6 +28,7 @@ import com.example.gpaie.Model.PlaningUserModel;
 import com.example.gpaie.Repository.AbsenceRepository;
 import com.example.gpaie.Repository.FichePresenceRepository;
 import com.example.gpaie.Repository.FonctionRepository;
+import com.example.gpaie.Repository.HeureSupplRepository;
 import com.example.gpaie.Repository.PlaningRepository;
 import com.example.gpaie.Repository.TypePlaningRepository;
 import com.example.gpaie.Repository.UserRepository;
@@ -48,7 +50,8 @@ public class PlaningServiceImpl implements PlaningService {
     private UserRepository userRepository;
     @Autowired
     private FichePresenceRepository fichePresenceRepository;
-
+    @Autowired
+    private HeureSupplRepository heureSupplRepository;
     @Override
     public PlaningModel save(PlaningModel planingModel) {
         // System.out.println(planingModel);
@@ -111,7 +114,9 @@ public class PlaningServiceImpl implements PlaningService {
         YearMonth yearMonth = YearMonth.of(date.getYear(), date.getMonthValue());
         List<LocalDate> days = new ArrayList<>();
         for (int i = 1; i < yearMonth.atEndOfMonth().getDayOfMonth(); i++) {
+            if(yearMonth.atDay(i).getDayOfWeek().getValue()<6){
             days.add(yearMonth.atDay(i));
+            }
         }
         List<User> users = userRepository.findAll();
         List<PlaningUserModel> planingUserModels = new ArrayList<>();
@@ -120,6 +125,9 @@ public class PlaningServiceImpl implements PlaningService {
             var nb_user = 0;
             double total_heure = 0.0;
             for (LocalDate localDate2 : days) {
+                var heureSuppl=heureSupplRepository.findOneByDateHeureSupplAndUser(localDate2,user);
+
+               // System.out.println(heureSuppl);
                 if (localDate2.getDayOfWeek().getValue() != 6 && localDate2.getDayOfWeek().getValue() != 7) {
                     if (user.getTypeplaning() == 2) { // Etudiant
                         var makeP = new Makeplaning();
@@ -168,6 +176,10 @@ public class PlaningServiceImpl implements PlaningService {
                         }
                       
                         if (planinig != null && absence.isEmpty() && iswork) {
+                            if(heureSuppl != null){
+                                var h_=Duration.between(heureSuppl.getHeureDebut(), heureSuppl.getHeureFin()).toHours();
+                                makeP.setHeuresuppl(h_);
+                            }
                            // makeP.setFonction(planinig.getFonction().getTypeFonction());
                             makeP.setHeure_debut(start.toString());
                             makeP.setHeure_fin(stop.toString());
@@ -227,7 +239,11 @@ public class PlaningServiceImpl implements PlaningService {
                         }
                        
                         if (planinig != null && absence.isEmpty()) {
-                            makeP.setFonction(planinig.getFonction().getTypeFonction());
+                            if(heureSuppl != null){
+                                var h_=Duration.between(heureSuppl.getHeureDebut(), heureSuppl.getHeureFin()).toHours();
+                                makeP.setHeuresuppl(h_);
+                            }
+                             makeP.setFonction(planinig.getFonction().getTypeFonction());
                             makeP.setHeure_debut(start.toString());
                             makeP.setHeure_fin(stop.toString());
                             makeP.setPlaning_id(planinig.getId());
@@ -279,6 +295,12 @@ public class PlaningServiceImpl implements PlaningService {
 
                         }
                         if (planinig != null && absence.isEmpty()) {
+                            if(heureSuppl != null){
+                                var h_=Duration.between(heureSuppl.getHeureDebut(), heureSuppl.getHeureFin()).toHours();
+                                makeP.setHeuresuppl(h_);
+                            }
+                            
+                            
                             makeP.setFonction(planinig.getFonction().getTypeFonction());
                             makeP.setHeure_debut(start.toString());
                             makeP.setHeure_fin(stop.toString());
@@ -321,7 +343,10 @@ public class PlaningServiceImpl implements PlaningService {
         YearMonth yearMonth = YearMonth.of(date.getYear(), date.getMonthValue());
         List<LocalDate> days = new ArrayList<>();
         for (int i = 1; i < yearMonth.atEndOfMonth().getDayOfMonth(); i++) {
-            days.add(yearMonth.atDay(i));
+            if(yearMonth.atDay(i).getDayOfWeek().getValue()<6){
+                days.add(yearMonth.atDay(i));
+            }
+            
         }
         return days;
     }
@@ -330,7 +355,8 @@ public class PlaningServiceImpl implements PlaningService {
     public List<LocalDate> getPlaningHeaderWeek(String localdate) {
         DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
         List<LocalDate> days = DateUtil.getWeekFromDate(LocalDate.parse(localdate, dateTimeFormatter));
-        return days;
+       var ret= days.stream().filter(e->e.getDayOfWeek().getValue()<6).collect(Collectors.toList());
+        return ret;
     }
 
     @Override
@@ -338,13 +364,15 @@ public class PlaningServiceImpl implements PlaningService {
         System.out.println(localdate);
         DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
         List<LocalDate> days = DateUtil.getWeekFromDate(LocalDate.parse(localdate, dateTimeFormatter));
+        var ret= days.stream().filter(e->e.getDayOfWeek().getValue()<6).collect(Collectors.toList());
         List<User> users = userRepository.findAll();
         List<PlaningUserModel> planingUserModels = new ArrayList<>();
         for (User user : users) {
             List<Makeplaning> makeplanings = new ArrayList<>();
             var nb_user = 0;
             double total_heure = 0.0;
-            for (LocalDate localDate2 : days) {
+            for (LocalDate localDate2 : ret) {
+                var heureSuppl=heureSupplRepository.findOneByDateHeureSupplAndUser(localDate2,user);
                 if (localDate2.getDayOfWeek().getValue() != 6 && localDate2.getDayOfWeek().getValue() != 7) {
                     if (user.getTypeplaning() == 2) { // Etudiant
                         var makeP = new Makeplaning();
@@ -393,7 +421,10 @@ public class PlaningServiceImpl implements PlaningService {
 
                         }
                         if (planinig != null && absence.isEmpty() && iswork) {
-                           
+                            if(heureSuppl != null){
+                                var h_=Duration.between(heureSuppl.getHeureDebut(), heureSuppl.getHeureFin()).toHours();
+                                makeP.setHeuresuppl(h_);
+                            }
                             makeP.setHeure_debut(start.toString());
                             makeP.setHeure_fin(stop.toString());
                             makeP.setPlaning_id(planinig.getId());
@@ -448,6 +479,10 @@ public class PlaningServiceImpl implements PlaningService {
 
                         }
                         if (planinig != null && absence.isEmpty()) {
+                            if(heureSuppl != null){
+                                var h_=Duration.between(heureSuppl.getHeureDebut(), heureSuppl.getHeureFin()).toHours();
+                                makeP.setHeuresuppl(h_);
+                            }
                             makeP.setFonction(planinig.getFonction().getTypeFonction());
                             makeP.setHeure_debut(start.toString());
                             makeP.setHeure_fin(stop.toString());
@@ -498,6 +533,10 @@ public class PlaningServiceImpl implements PlaningService {
 
                         }
                         if (planinig != null && absence.isEmpty()) {
+                            if(heureSuppl != null){
+                                var h_=Duration.between(heureSuppl.getHeureDebut(), heureSuppl.getHeureFin()).toHours();
+                                makeP.setHeuresuppl(h_);
+                            }
                             makeP.setFonction(planinig.getFonction().getTypeFonction());
                             makeP.setHeure_debut(start.toString());
                             makeP.setHeure_fin(stop.toString());

@@ -43,7 +43,7 @@ public class DepartementServiceImpl implements DepartementService{
     }
     @Override
     public List<DepartementModel> findAll() {
-        return departementRepository.findAll().stream().filter(Objects::nonNull).map(this::departementToDepartementModel).collect(Collectors.toList());
+        return departementRepository.findAll().stream().filter(Objects::nonNull).map(this::departementToDepartementModel).sorted((x,y)-> y.getId().compareTo(x.getId())).collect(Collectors.toList());
     }
     @Override
     public Optional<DepartementModel> findOne(Long id) {

@@ -3,7 +3,10 @@ package com.example.gpaie.Service.Impl;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.LocalTime;
+import java.time.Month;
+import java.time.MonthDay;
 import java.time.YearMonth;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
@@ -142,7 +145,8 @@ public class PaiementServiceImpl implements PaiementService {
             if (paie == null) {
                 paie = new Paiement();
                 paie.setUser(user);
-                paie.setDatePaie(LocalDate.now());
+                paie.setCreatedAt(LocalDateTime.now());
+                paie.setModifiedAt(LocalDateTime.now());
                 paie.setMonth(month);
                 paie.setYear(year);
             }
@@ -163,13 +167,13 @@ public class PaiementServiceImpl implements PaiementService {
             fichePaies.stream().filter(e -> e.getHeureDebut().isBlank() == false)
                     .forEach(e -> System.out.println(e.getHeureDebut()));
             // System.out.println(total_jour_travaille);
-            var prime_HS = heure_supplementaires/60 * 35;
-            var prime_equipe = Math.round((heure_pointe_arr * 1.25 )* 100.0) / 100.0;
-            var transp = Math.round((total_jour_travaille * 1.62) * 100.0) / 100.0;
+            var prime_HS = heure_supplementaires/60 * user.getFonction().getSalaireSuppl()*2;
+            var prime_equipe = Math.round((heure_pointe_arr * user.getFonction().getSalaireSuppl()* 0.25 )* 100.0) / 100.0;
+            var transp = Math.round((total_jour_travaille * user.getFonction().getSalaireSuppl()*0.62) * 100.0) / 100.0;
             var prime_repas = total_jour_travaille * 8;
             var retenu_chomage = 0;
             var retenu_retraitre = 0;
-            var prestation = Math.round((heure_pointe_arr * 17.5) * 100.0) / 100.0;
+            var prestation = Math.round((heure_pointe_arr * user.getFonction().getSalaireSuppl()) * 100.0) / 100.0;
             
             var total_prime = (Math.round((prime_equipe + prime_repas + transp + prime_HS) * 100.0)) / 100.0;
             var salaire_brut = (Math.round((prestation + total_prime) * 100.0) / 100.0);
@@ -212,7 +216,7 @@ public class PaiementServiceImpl implements PaiementService {
 
 
             paiementRepository.saveAndFlush(paie);
-            generatePdf(paie);
+            //generatePdf(paie);
             var paiementModel = new PaiementModel(paie);
             paiementModels.add(paiementModel);
         }
@@ -366,7 +370,12 @@ public class PaiementServiceImpl implements PaiementService {
             final PdfWriter pdfWriter = PdfWriter.getInstance(document, pdfOutputFile);
             Font font14 = FontFactory.getFont(FontFactory.HELVETICA_BOLD, 14);
             document.open(); // Open the Document
-            Chunk chunktitle = new Chunk("Fiche de paie", font14);
+            //var month=YearMonth.of(paiement.getYear(), paiement.getMonth()).getMonth();
+           // var start=paiement.getDatePaie().withDayOfMonth(1);
+           //var lastday= paiement.getDatePaie().withDayOfMonth(paiement.getDatePaie().getMonth().length(paiement.getDatePaie().isLeapYear()));
+            var date_debut = LocalDate.of(paiement.getYear(), paiement.getMonth(), 01);
+            var date_fin = LocalDate.of(paiement.getYear(), paiement.getMonth(), YearMonth.of(paiement.getYear(), paiement.getMonth()).atEndOfMonth().getDayOfMonth());
+            Chunk chunktitle = new Chunk("Fiche de paie "+date_debut+" -"+date_fin, font14);
             chunktitle.setUnderline(new Color(0x00, 0x00, 0x00), 2.0f, 0.0f, -5.0f, 0, PdfContentByte.LINE_CAP_ROUND);
             document.add(chunktitle);
             Paragraph paragraph = new Paragraph();
@@ -562,6 +571,8 @@ public class PaiementServiceImpl implements PaiementService {
             sendMailWithAttachment(emailDetail);
             var paiementModel = new PaiementModel(paie);
             paiementModels.add(paiementModel);
+            paie.setDatePaie(LocalDate.now());
+            paie.setModifiedAt(LocalDateTime.now());
         }
         return paiementModels;
     }

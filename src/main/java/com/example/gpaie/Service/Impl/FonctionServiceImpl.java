@@ -49,7 +49,7 @@ public class FonctionServiceImpl implements FonctionService{
     }
     @Override
     public List<FontionModel> findAll() {
-     return fonctionRepository.findAll().stream().map(e->fonctionToFonctionModel(e)).collect(Collectors.toList());
+     return fonctionRepository.findAll().stream().map(e->fonctionToFonctionModel(e)).sorted((x,y)-> y.getId().compareTo(x.getId())).collect(Collectors.toList());
     }
     @Override
     public Optional<FontionModel> findOne(Long id) {

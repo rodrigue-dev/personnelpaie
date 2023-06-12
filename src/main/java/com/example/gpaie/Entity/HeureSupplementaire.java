@@ -99,4 +99,18 @@ public class HeureSupplementaire {
         this.createby = createby;
     }
 
+    @Override
+    public String toString() {
+        return "{" +
+            " id='" + getId() + "'" +
+            ", createdAt='" + getCreatedAt() + "'" +
+            ", modifiedAt='" + getModifiedAt() + "'" +
+            ", dateHeureSuppl='" + getDateHeureSuppl() + "'" +
+            ", heureDebut='" + getHeureDebut() + "'" +
+            ", heureFin='" + getHeureFin() + "'" +
+            ", user='" + getUser() + "'" +
+            ", createby='" + getCreateby() + "'" +
+            "}";
+    }
+
 }

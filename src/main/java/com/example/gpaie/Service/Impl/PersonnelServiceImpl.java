@@ -93,7 +93,7 @@ public class PersonnelServiceImpl implements PersonnelService{
 
     @Override
     public List<PersonnelModel> findAll() {
-        return personnelRepository.findAll().stream().filter(Objects::nonNull).map(this::personnelToPersonnelModel).collect(Collectors.toList());  
+        return personnelRepository.findAll().stream().filter(Objects::nonNull).map(this::personnelToPersonnelModel).sorted((x,y)-> y.getId().compareTo(x.getId())).collect(Collectors.toList());  
    
     }
 

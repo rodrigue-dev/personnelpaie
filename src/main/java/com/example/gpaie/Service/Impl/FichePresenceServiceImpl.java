@@ -101,7 +101,7 @@ public class FichePresenceServiceImpl implements FichePresenceService{
     @Override
     public List<FichePresenceModel> findAll() {
 
-        return fichePresenceRepository.findAll().stream().map(this::fichePresenceToFichePresenceModel).collect(Collectors.toList());
+        return fichePresenceRepository.findAll().stream().map(this::fichePresenceToFichePresenceModel).sorted((x,y)-> y.getId().compareTo(x.getId())).collect(Collectors.toList());
     }
     @Override
     public List<FichePresenceModel> findAllByDate(String date) {

@@ -8,6 +8,15 @@ public class Makeplaning {
     private String heure_debut;
     private String heure_fin;
     private String date_planing;
+    private Long heuresuppl;
+
+    public Long getHeuresuppl() {
+        return this.heuresuppl;
+    }
+
+    public void setHeuresuppl(Long heuresuppl) {
+        this.heuresuppl = heuresuppl;
+    }
 
     public boolean isIspointe() {
         return this.ispointe;

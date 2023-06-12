@@ -27,6 +27,7 @@ public class Paiement {
     private LocalDateTime createdAt;
     @LastModifiedDate
     private LocalDateTime modifiedAt;
+    @Column(nullable = true)
     private LocalDate datePaie;
     private double total_heure;
     private int totalJours;

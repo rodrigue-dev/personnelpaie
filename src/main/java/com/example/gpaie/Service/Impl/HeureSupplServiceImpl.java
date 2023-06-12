@@ -50,7 +50,7 @@ public class HeureSupplServiceImpl implements HeureSupplService{
     }
     @Override
     public List<HeureSupplModel> findAll() {
-        return heureSupplRepository.findAll().stream().filter(Objects::nonNull).map(this::heureSupplToHeureSupplModel).collect(Collectors.toList());
+        return heureSupplRepository.findAll().stream().filter(Objects::nonNull).sorted((x,y)-> y.getId().compareTo(x.getId())).map(this::heureSupplToHeureSupplModel).collect(Collectors.toList());
     }
     @Override
     public Optional<HeureSupplModel> findOne(Long id) {

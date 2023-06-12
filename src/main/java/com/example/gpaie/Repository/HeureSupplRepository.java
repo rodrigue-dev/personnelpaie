@@ -9,5 +9,6 @@ import com.example.gpaie.Entity.HeureSupplementaire;
 import com.example.gpaie.Entity.User;
 
 public interface HeureSupplRepository  extends JpaRepository<HeureSupplementaire, Long>{
+    HeureSupplementaire findOneByDateHeureSupplAndUser(LocalDate localDate,User user);
     List<HeureSupplementaire> findAllByUserAndDateHeureSupplBetween(User user,LocalDate datedebut , LocalDate datefin);
 }

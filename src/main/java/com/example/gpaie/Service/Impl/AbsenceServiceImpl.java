@@ -2,6 +2,7 @@ package com.example.gpaie.Service.Impl;
 
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
@@ -62,7 +63,7 @@ public class AbsenceServiceImpl implements AbsenceService{
 
     @Override
     public List<AbsenceModel> findAll() {
-      return absenceRepository.findAll().stream().filter(Objects::nonNull).map(this::absenceToAbsenceModel).collect(Collectors.toList());
+      return absenceRepository.findAll().stream().filter(Objects::nonNull).map(this::absenceToAbsenceModel).sorted((x,y)-> y.getId().compareTo(x.getId())).collect(Collectors.toList());
     }
     @Override
     public List<AbsenceModel> findAllOwn(Long id) {

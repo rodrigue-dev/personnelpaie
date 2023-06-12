@@ -45,7 +45,7 @@ public class AvantageServiceImpl implements AvantageService{
 
     @Override
     public List<AvantageModel> findAll() {
-      return avantageRepository.findAll().stream().filter(Objects::nonNull).map(this::avantageToAvantageModel).collect(Collectors.toList());
+      return avantageRepository.findAll().stream().filter(Objects::nonNull).map(this::avantageToAvantageModel).sorted((x,y)-> y.getId().compareTo(x.getId())).collect(Collectors.toList());
     }
 
     @Override

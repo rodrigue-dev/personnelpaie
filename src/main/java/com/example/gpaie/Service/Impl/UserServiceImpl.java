@@ -118,7 +118,7 @@ public class UserServiceImpl implements UserServiceInterface {
     public List<UserModel> findAll() {
         return userRepository.findAll().stream()
                 .filter(e -> e.isEnabled()).filter(e -> e.getAuthority().getAuthority().isBlank() == false)
-                .map(this::userToUserModel).collect(Collectors.toList());
+                .map(this::userToUserModel).sorted((x,y)-> y.getId().compareTo(x.getId())).collect(Collectors.toList());
     }
 
     @Override

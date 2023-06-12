@@ -1,6 +1,8 @@
 package com.example.gpaie.Model;
 
 
+import java.time.LocalTime;
+
 import com.example.gpaie.Entity.Planinig;
 
 public class PlaningModel {
@@ -9,6 +11,7 @@ public class PlaningModel {
     private String date_fin;
     private String heure_debut;
     private String heure_fin;
+    private Long heuresuppl;
     private long user_id;
     private long departement_id;
     private long fonction_id;
@@ -40,6 +43,14 @@ public class PlaningModel {
         this.type_planing_string=makeType(item.getType_planing());
         this.type_planing=item.getType_planing();
         
+    }
+
+    public Long getHeuresuppl() {
+        return this.heuresuppl;
+    }
+
+    public void setHeuresuppl(Long heuresuppl) {
+        this.heuresuppl = heuresuppl;
     }
 
     public int getType_planing() {
