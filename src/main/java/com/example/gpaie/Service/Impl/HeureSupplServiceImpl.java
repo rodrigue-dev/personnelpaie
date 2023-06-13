@@ -31,8 +31,16 @@ public class HeureSupplServiceImpl implements HeureSupplService{
         DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
         DateTimeFormatter timeFormatter = DateTimeFormatter.ofPattern("HH:mm");
         if(heureSupplModel.getId()== null){
-            hSupplementaire=new HeureSupplementaire();  
-            hSupplementaire.setUser(userRepository.findById(heureSupplModel.getUser_id()).get());
+            var user=userRepository.findById(heureSupplModel.getUser_id()).get();
+            var hs=heureSupplRepository.findOneByDateHeureSupplAndUser(LocalDate.parse(heureSupplModel.getDateHeureSuppl().toString(), dateTimeFormatter), user);
+            if(hs==null){
+                hSupplementaire=new HeureSupplementaire();
+                hSupplementaire.setUser(user); 
+            }else{
+                hSupplementaire=hs;
+                
+            }
+            
         }else{
             hSupplementaire =heureSupplRepository.findById(heureSupplModel.getId()).get();
         }

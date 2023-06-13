@@ -1,6 +1,7 @@
 package com.example.gpaie.Service.Impl;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.Optional;
@@ -83,13 +84,14 @@ public class UserServiceImpl implements UserServiceInterface {
                 user.setImage(fileService.convertImageByte(userRequest.getImageFile()));
             }
         }
-
+  DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
         if (userRequest.getTypeplaning() == 2) {
-
             user.setDayworks(userRequest.getDayworks());
         }
+        user.setCreatedAt(LocalDateTime.from(dateTimeFormatter.parse(userRequest.getDate_debut())));
+        user.setModifiedAt(LocalDateTime.from(dateTimeFormatter.parse(userRequest.getDate_fin())));
         User u = userRepository.saveAndFlush(user);
-        DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+      
         planingService.getPlaningMonth(LocalDate.now().format(dateTimeFormatter));
         if (sendMail) {
             EmailDetails emailDetails = new EmailDetails();
