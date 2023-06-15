@@ -13,11 +13,12 @@ import org.springframework.web.bind.annotation.*;
 import com.example.gpaie.Model.EmailModel;
 import com.example.gpaie.Model.UserModel;
 import com.example.gpaie.Service.UserServiceInterface;
+import com.example.gpaie.Utils.HeaderUtil;
 
 @RestController
 @RequestMapping("/v1")
-@CrossOrigin(origins = "*")
 public class UserController {
+    private static final String ENTITY_NAME = "USERS";
     @Autowired
     private UserServiceInterface userServiceInterface;
     @Autowired
@@ -47,14 +48,16 @@ public class UserController {
     @PostMapping("/users")
     public ResponseEntity<UserModel> createUser(@RequestBody UserModel user){
     
-         try {
+        // try {
             UserModel newUser = userServiceInterface.save(user);
+            System.out.println("impossible");
             return new ResponseEntity<>(newUser, HttpStatus.CREATED);
-        } catch (Exception e) {
-            System.out.println(e.getMessage());
+      //  } catch (Exception e) {
+          //  System.out.println("impossible------");
+           // System.out.println(e.getCause());
             //log.debug("Created Information for User: {}", e.getMessage());
-            return new ResponseEntity<>(null, HttpStatus.EXPECTATION_FAILED);
-        } 
+            //return new ResponseEntity<>(HeaderUtil.createEntityCreationAlert(ENTITY_NAME, e.toString()), HttpStatus.BAD_REQUEST);
+       // } 
     }
     @PostMapping("/users/sendmail")
     public ResponseEntity<?> sendMail(@RequestBody EmailModel user){

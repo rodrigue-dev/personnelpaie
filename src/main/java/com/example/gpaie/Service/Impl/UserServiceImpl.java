@@ -83,15 +83,16 @@ public class UserServiceImpl implements UserServiceInterface {
                 user.setImageUrl(photo);
                 user.setImage(fileService.convertImageByte(userRequest.getImageFile()));
             }
-        }
-  DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+        } 
+        System.out.println("erreur pas ici");
+        DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
         if (userRequest.getTypeplaning() == 2) {
             user.setDayworks(userRequest.getDayworks());
         }
-        user.setCreatedAt(LocalDateTime.from(dateTimeFormatter.parse(userRequest.getDate_debut())));
-        user.setModifiedAt(LocalDateTime.from(dateTimeFormatter.parse(userRequest.getDate_fin())));
+        user.setCreatedAt(LocalDate.parse(userRequest.getDateDebut(),dateTimeFormatter).atTime(0, 0));
+        user.setModifiedAt(LocalDate.parse(userRequest.getDateFin(), dateTimeFormatter).atTime(0, 0));
         User u = userRepository.saveAndFlush(user);
-      
+       
         planingService.getPlaningMonth(LocalDate.now().format(dateTimeFormatter));
         if (sendMail) {
             EmailDetails emailDetails = new EmailDetails();

@@ -22,8 +22,8 @@ public class UserModel implements Serializable{
     private String imageFile;
     private String email;
     private String role;
-    private String date_debut;
-    private String date_fin;
+    private String dateDebut;
+    private String dateFin;
     private long departement_id;
     private long fonction_id;
     private String departement;
@@ -52,8 +52,8 @@ public class UserModel implements Serializable{
         this.fonction=user.getFonction().getTypeFonction();
         this.typeplaning=user.getTypeplaning();
         this.dayworks=user.getDayworks();
-        this.date_debut=user.getCreatedAt()==null?null:user.getCreatedAt().toString();
-        this.date_fin=user.getModifiedAt()==null?null:user.getModifiedAt().toString();
+        this.dateDebut=user.getCreatedAt()==null?null:user.getCreatedAt().toString();
+        this.dateFin=user.getModifiedAt()==null?null:user.getModifiedAt().toString();
         String fileDownloadUri = ServletUriComponentsBuilder
           .fromCurrentContextPath()
           .path("/v1/files/")
@@ -64,21 +64,22 @@ public class UserModel implements Serializable{
     }
 
 
-    public String getDate_debut() {
-        return this.date_debut;
+    public String getDateDebut() {
+        return this.dateDebut;
     }
 
-    public void setDate_debut(String date_debut) {
-        this.date_debut = date_debut;
+    public void setDateDebut(String dateDebut) {
+        this.dateDebut = dateDebut;
     }
 
-    public String getDate_fin() {
-        return this.date_fin;
+    public String getDateFin() {
+        return this.dateFin;
     }
 
-    public void setDate_fin(String date_fin) {
-        this.date_fin = date_fin;
+    public void setDateFin(String dateFin) {
+        this.dateFin = dateFin;
     }
+
 
 
     public Set<Integer> getDayworks() {
