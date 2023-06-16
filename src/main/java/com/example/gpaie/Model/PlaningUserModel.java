@@ -8,6 +8,15 @@ public class PlaningUserModel {
     private String user;
     private List<Makeplaning> makeplanings;
     private double total_heure;
+    private double total_heure_suppl;
+
+    public double getTotal_heure_suppl() {
+        return this.total_heure_suppl;
+    }
+
+    public void setTotal_heure_suppl(double total_heure_suppl) {
+        this.total_heure_suppl = total_heure_suppl;
+    }
 
     public double getTotal_heure() {
         return this.total_heure;

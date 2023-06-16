@@ -84,7 +84,7 @@ public class UserServiceImpl implements UserServiceInterface {
                 user.setImage(fileService.convertImageByte(userRequest.getImageFile()));
             }
         } 
-        System.out.println("erreur pas ici");
+     
         DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
         if (userRequest.getTypeplaning() == 2) {
             user.setDayworks(userRequest.getDayworks());

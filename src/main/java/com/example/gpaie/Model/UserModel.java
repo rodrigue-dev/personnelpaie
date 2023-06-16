@@ -1,6 +1,7 @@
 package com.example.gpaie.Model;
 
 import java.io.Serializable;
+import java.time.format.DateTimeFormatter;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -33,7 +34,7 @@ public class UserModel implements Serializable{
     private Set<Integer> dayworks= new HashSet<>();
     public UserModel() {
     }
-
+    DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
     public UserModel(User user) {
         this.id = user.getId();
         this.firstname=user.getNom();
@@ -52,8 +53,8 @@ public class UserModel implements Serializable{
         this.fonction=user.getFonction().getTypeFonction();
         this.typeplaning=user.getTypeplaning();
         this.dayworks=user.getDayworks();
-        this.dateDebut=user.getCreatedAt()==null?null:user.getCreatedAt().toString();
-        this.dateFin=user.getModifiedAt()==null?null:user.getModifiedAt().toString();
+        this.dateDebut=user.getCreatedAt()==null?null:user.getCreatedAt().format(dateTimeFormatter);
+        this.dateFin=user.getModifiedAt()==null?null:user.getModifiedAt().format(dateTimeFormatter);
         String fileDownloadUri = ServletUriComponentsBuilder
           .fromCurrentContextPath()
           .path("/v1/files/")

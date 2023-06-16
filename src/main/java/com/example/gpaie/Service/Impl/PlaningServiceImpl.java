@@ -124,6 +124,7 @@ public class PlaningServiceImpl implements PlaningService {
             List<Makeplaning> makeplanings = new ArrayList<>();
             var nb_user = 0;
             double total_heure = 0.0;
+            double total_suppl = 0.0;
             for (LocalDate localDate2 : days) {
                 var heureSuppl=heureSupplRepository.findOneByDateHeureSupplAndUser(localDate2,user);
 
@@ -182,6 +183,7 @@ public class PlaningServiceImpl implements PlaningService {
                             if(heureSuppl != null){
                                 var h_=Duration.between(heureSuppl.getHeureDebut(), heureSuppl.getHeureFin()).toHours();
                                 makeP.setHeuresuppl(h_);
+                                total_suppl+=h_;
                             }
                            // makeP.setFonction(planinig.getFonction().getTypeFonction());
                             makeP.setHeure_debut(start.toString());
@@ -247,6 +249,7 @@ public class PlaningServiceImpl implements PlaningService {
                             if(heureSuppl != null){
                                 var h_=Duration.between(heureSuppl.getHeureDebut(), heureSuppl.getHeureFin()).toHours();
                                 makeP.setHeuresuppl(h_);
+                                total_suppl+=h_;
                             }
                              makeP.setFonction(planinig.getFonction().getTypeFonction());
                             makeP.setHeure_debut(start.toString());
@@ -305,6 +308,7 @@ public class PlaningServiceImpl implements PlaningService {
                             if(heureSuppl != null){
                                 var h_=Duration.between(heureSuppl.getHeureDebut(), heureSuppl.getHeureFin()).toHours();
                                 makeP.setHeuresuppl(h_);
+                                total_suppl+=h_;
                             }
                             
                             
@@ -337,6 +341,7 @@ public class PlaningServiceImpl implements PlaningService {
             planingUserModel.setDepartement_id(user.getDepartement().getId());
             planingUserModel.setMakeplanings(makeplanings);
             planingUserModel.setTotal_heure(total_heure / 60);
+            planingUserModel.setTotal_heure_suppl(total_suppl);
             planingUserModels.add(planingUserModel);
         }
         return planingUserModels;
@@ -378,6 +383,7 @@ public class PlaningServiceImpl implements PlaningService {
             List<Makeplaning> makeplanings = new ArrayList<>();
             var nb_user = 0;
             double total_heure = 0.0;
+            double total_suppl=0.0;
             for (LocalDate localDate2 : ret) {
                 var heureSuppl=heureSupplRepository.findOneByDateHeureSupplAndUser(localDate2,user);
                 if (localDate2.getDayOfWeek().getValue() != 6 && localDate2.getDayOfWeek().getValue() != 7) {
@@ -433,6 +439,7 @@ public class PlaningServiceImpl implements PlaningService {
                             if(heureSuppl != null){
                                 var h_=Duration.between(heureSuppl.getHeureDebut(), heureSuppl.getHeureFin()).toHours();
                                 makeP.setHeuresuppl(h_);
+                                total_suppl+=h_;
                             }
                             makeP.setHeure_debut(start.toString());
                             makeP.setHeure_fin(stop.toString());
@@ -493,6 +500,7 @@ public class PlaningServiceImpl implements PlaningService {
                             if(heureSuppl != null){
                                 var h_=Duration.between(heureSuppl.getHeureDebut(), heureSuppl.getHeureFin()).toHours();
                                 makeP.setHeuresuppl(h_);
+                                total_suppl+=h_;
                             }
                             makeP.setFonction(planinig.getFonction().getTypeFonction());
                             makeP.setHeure_debut(start.toString());
@@ -549,6 +557,7 @@ public class PlaningServiceImpl implements PlaningService {
                             if(heureSuppl != null){
                                 var h_=Duration.between(heureSuppl.getHeureDebut(), heureSuppl.getHeureFin()).toHours();
                                 makeP.setHeuresuppl(h_);
+                                total_suppl+=h_;
                             }
                             makeP.setFonction(planinig.getFonction().getTypeFonction());
                             makeP.setHeure_debut(start.toString());
@@ -579,6 +588,7 @@ public class PlaningServiceImpl implements PlaningService {
             planingUserModel.setDepartement_id(user.getDepartement().getId());
             planingUserModel.setMakeplanings(makeplanings);
             planingUserModel.setTotal_heure(total_heure / 60);
+            planingUserModel.setTotal_heure_suppl(total_suppl);
             planingUserModels.add(planingUserModel);
         }
         return planingUserModels;
