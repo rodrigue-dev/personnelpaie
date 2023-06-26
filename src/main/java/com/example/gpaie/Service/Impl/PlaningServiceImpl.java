@@ -35,7 +35,6 @@ import com.example.gpaie.Repository.UserRepository;
 import com.example.gpaie.Service.FichePresenceService;
 import com.example.gpaie.Service.PlaningService;
 import com.example.gpaie.Utils.DateUtil;
-import com.fasterxml.jackson.datatype.jsr310.deser.LocalDateTimeDeserializer;
 
 @Service
 public class PlaningServiceImpl implements PlaningService {
@@ -113,8 +112,9 @@ public class PlaningServiceImpl implements PlaningService {
         var date = LocalDate.parse(localdate, dateTimeFormatter);
         YearMonth yearMonth = YearMonth.of(date.getYear(), date.getMonthValue());
         List<LocalDate> days = new ArrayList<>();
-        for (int i = 1; i < yearMonth.atEndOfMonth().getDayOfMonth(); i++) {
+        for (int i = 1; i <= yearMonth.atEndOfMonth().getDayOfMonth(); i++) {
             if(yearMonth.atDay(i).getDayOfWeek().getValue()<6){
+                log.info("--------------------"+yearMonth.atDay(i).getDayOfWeek().getValue());
             days.add(yearMonth.atDay(i));
             }
         }
@@ -354,7 +354,7 @@ public class PlaningServiceImpl implements PlaningService {
         var date = LocalDate.parse(localdate, dateTimeFormatter);
         YearMonth yearMonth = YearMonth.of(date.getYear(), date.getMonthValue());
         List<LocalDate> days = new ArrayList<>();
-        for (int i = 1; i < yearMonth.atEndOfMonth().getDayOfMonth(); i++) {
+        for (int i = 1; i <= yearMonth.atEndOfMonth().getDayOfMonth(); i++) {
             if(yearMonth.atDay(i).getDayOfWeek().getValue()<6){
                 days.add(yearMonth.atDay(i));
             }
