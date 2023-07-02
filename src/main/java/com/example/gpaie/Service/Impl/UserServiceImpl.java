@@ -89,7 +89,7 @@ public class UserServiceImpl implements UserServiceInterface {
         if (userRequest.getTypeplaning() == 2) {
             user.setDayworks(userRequest.getDayworks());
         }
-        user.setCreatedAt(LocalDate.parse(userRequest.getDateDebut(),dateTimeFormatter).atTime(0, 0));
+        user.setCreatedAt(LocalDate.parse(userRequest.getDateDebut(),dateTimeFormatter).atTime(8, 0));
         user.setModifiedAt(LocalDate.parse(userRequest.getDateFin(), dateTimeFormatter).atTime(0, 0));
         User u = userRepository.saveAndFlush(user);
        

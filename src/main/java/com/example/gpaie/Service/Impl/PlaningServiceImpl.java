@@ -164,7 +164,7 @@ public class PlaningServiceImpl implements PlaningService {
                                     System.out.println(localDate2.getDayOfWeek().getValue()+"- "+iswork);
                         }
                         if (planinig == null && absence.isEmpty() && iswork) {
-                            if(localDate2.compareTo(user.getCreatedAt().toLocalDate())>0){
+                            if(localDate2.compareTo(user.getCreatedAt().toLocalDate())>=0){
                             planinig = new Planinig();
                             planinig.setFonction(user.getFonction());
                             planinig.setHeureDebut(start);
@@ -231,7 +231,7 @@ public class PlaningServiceImpl implements PlaningService {
 
                         }
                         if (planinig == null && absence.isEmpty()) {
-                            if(localDate2.compareTo(user.getCreatedAt().toLocalDate())>0){
+                            if(localDate2.compareTo(user.getCreatedAt().toLocalDate())>=0){
                             planinig = new Planinig();
                             planinig.setFonction(user.getFonction());
                             planinig.setHeureDebut(start);
@@ -291,7 +291,7 @@ public class PlaningServiceImpl implements PlaningService {
 
                         }
                         if (planinig == null && absence.isEmpty()) {
-                            if(localDate2.compareTo(user.getCreatedAt().toLocalDate())>0){
+                            if(localDate2.compareTo(user.getCreatedAt().toLocalDate())>=0){
                             planinig = new Planinig();
                             planinig.setFonction(user.getFonction());
                             planinig.setHeureDebut(start);
@@ -423,7 +423,7 @@ public class PlaningServiceImpl implements PlaningService {
                         }
 
                         if (planinig == null && absence.isEmpty() && iswork) {
-                            if(localDate2.compareTo(user.getCreatedAt().toLocalDate())>0){
+                            if(localDate2.compareTo(user.getCreatedAt().toLocalDate())>=0){
                             planinig = new Planinig();
                             planinig.setFonction(user.getFonction());
                             planinig.setHeureDebut(start);
@@ -484,7 +484,7 @@ public class PlaningServiceImpl implements PlaningService {
                                       }
                         }
                         if (planinig == null && absence.isEmpty()) {
-                            if(localDate2.compareTo(user.getCreatedAt().toLocalDate())>0){
+                            if(localDate2.compareTo(user.getCreatedAt().toLocalDate())>=0){
                             planinig = new Planinig();
                             planinig.setFonction(user.getFonction());
                             planinig.setHeureDebut(start);
@@ -541,7 +541,7 @@ public class PlaningServiceImpl implements PlaningService {
 
                         }
                         if (planinig == null && absence.isEmpty()) {
-                            if(localDate2.compareTo(user.getCreatedAt().toLocalDate())>0){
+                            if(localDate2.compareTo(user.getCreatedAt().toLocalDate())>=0){
                             planinig = new Planinig();
                             planinig.setFonction(user.getFonction());
                             planinig.setHeureDebut(start);
