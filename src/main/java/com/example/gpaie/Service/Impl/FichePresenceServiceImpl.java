@@ -65,7 +65,7 @@ public class FichePresenceServiceImpl implements FichePresenceService{
                }
            }else if(fichePresence.getUser().getTypeplaning()==1){
             fichePresence.setHeureFin(fichePresence.getHeureDebut().plusHours(4));
-            if(duration>8){
+            if(duration>4){
                 var heurSupp=new HeureSupplementaire();
                 heurSupp.setUser(fichePresence.getUser());
                 heurSupp.setHeureDebut(fichePresence.getHeureDebut().plusHours(4));

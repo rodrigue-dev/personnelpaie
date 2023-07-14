@@ -132,7 +132,7 @@ public class PlaningServiceImpl implements PlaningService {
                 if (localDate2.getDayOfWeek().getValue() != 6 && localDate2.getDayOfWeek().getValue() != 7) {
                     if (user.getTypeplaning() == 2) { // Etudiant
                         var makeP = new Makeplaning();
-                        Planinig planinig = planingRepository.findOneByDatePlaningAndUser(localDate2, user);
+                        Planinig planinig = planingRepository.findFirstByDatePlaningAndUser(localDate2, user);
                         List<Planinig> planinigs = planingRepository.findAllByUserAndDatePlaningBetween(user,
                                 days.stream().findFirst().get(),
                                 days.stream().sorted(Comparator.reverseOrder()).findFirst().get());
@@ -207,7 +207,7 @@ public class PlaningServiceImpl implements PlaningService {
                       
                     } else if (user.getTypeplaning() == 1) { // Mitemps
                         var makeP = new Makeplaning();
-                        Planinig planinig = planingRepository.findOneByDatePlaningAndUser(localDate2, user);
+                        Planinig planinig = planingRepository.findFirstByDatePlaningAndUser(localDate2, user);
                         var absence = congeRepository.findbetwenDate(localDate2, user);
                         var fichePresenceOptionel = fichePresenceRepository.findByUserAndDatePresence(user,
                                 localDate2);
@@ -267,7 +267,7 @@ public class PlaningServiceImpl implements PlaningService {
                         makeplanings.add(makeP);
                     } else { // temps plein
                         var makeP = new Makeplaning();
-                        Planinig planinig = planingRepository.findOneByDatePlaningAndUser(localDate2, user);
+                        Planinig planinig = planingRepository.findFirstByDatePlaningAndUser(localDate2, user);
                         var absence = congeRepository.findbetwenDate(localDate2, user);
                         var fichePresenceOptionel = fichePresenceRepository.findByUserAndDatePresence(user,
                                 localDate2);
@@ -389,7 +389,7 @@ public class PlaningServiceImpl implements PlaningService {
                 if (localDate2.getDayOfWeek().getValue() != 6 && localDate2.getDayOfWeek().getValue() != 7) {
                     if (user.getTypeplaning() == 2) { // Etudiant
                         var makeP = new Makeplaning();
-                        Planinig planinig = planingRepository.findOneByDatePlaningAndUser(localDate2, user);
+                        Planinig planinig = planingRepository.findFirstByDatePlaningAndUser(localDate2, user);
                         List<Planinig> planinigs = planingRepository.findAllByUserAndDatePlaningBetween(user,
                                 days.stream().findFirst().get(),
                                 days.stream().sorted(Comparator.reverseOrder()).findFirst().get());
@@ -462,7 +462,7 @@ public class PlaningServiceImpl implements PlaningService {
                        
                     } else if (user.getTypeplaning() == 1) { // Mitemps
                         var makeP = new Makeplaning();
-                        Planinig planinig = planingRepository.findOneByDatePlaningAndUser(localDate2, user);
+                        Planinig planinig = planingRepository.findFirstByDatePlaningAndUser(localDate2, user);
                         var absence = congeRepository.findbetwenDate(localDate2, user);
                         var fichePresenceOptionel = fichePresenceRepository.findByUserAndDatePresence(user,
                                 localDate2);
@@ -518,7 +518,7 @@ public class PlaningServiceImpl implements PlaningService {
                         makeplanings.add(makeP);
                     } else { // temps plein
                         var makeP = new Makeplaning();
-                        Planinig planinig = planingRepository.findOneByDatePlaningAndUser(localDate2, user);
+                        Planinig planinig = planingRepository.findFirstByDatePlaningAndUser(localDate2, user);
                         var absence = congeRepository.findbetwenDate(localDate2, user);
                         var fichePresenceOptionel = fichePresenceRepository.findByUserAndDatePresence(user,
                                 localDate2);
@@ -616,7 +616,7 @@ public class PlaningServiceImpl implements PlaningService {
         for (LocalDate localDate2 : days) {
             if (localDate2.getDayOfWeek().getValue() != 6 && localDate2.getDayOfWeek().getValue() != 7) {
                 var makeP = new Makeplaning();
-                Planinig planinig = planingRepository.findOneByDatePlaningAndUser(localDate2, user);
+                Planinig planinig = planingRepository.findFirstByDatePlaningAndUser(localDate2, user);
                 var absence = congeRepository.findbetwenDate(localDate2, user);
                 if (planinig == null && absence.isEmpty()) {
                     planinig = new Planinig();
