@@ -26,7 +26,7 @@ public class Fonction {
     @LastModifiedDate
     private LocalDateTime modifiedAt;
     private String typeFonction;
-    private float salaireSuppl;
+    private float salaireHeure;
     private int heureTravaille;
     @JsonIgnore
     @ManyToMany
@@ -71,13 +71,15 @@ public class Fonction {
         this.typeFonction = typeFonction;
     }
 
-    public float getSalaireSuppl() {
-        return this.salaireSuppl;
+
+    public float getSalaireHeure() {
+        return this.salaireHeure;
     }
 
-    public void setSalaireSuppl(float salaireSuppl) {
-        this.salaireSuppl = salaireSuppl;
+    public void setSalaireHeure(float salaireHeure) {
+        this.salaireHeure = salaireHeure;
     }
+
 
     public int getHeureTravaille() {
         return this.heureTravaille;

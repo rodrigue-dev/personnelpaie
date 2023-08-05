@@ -167,13 +167,13 @@ public class PaiementServiceImpl implements PaiementService {
             fichePaies.stream().filter(e -> e.getHeureDebut().isBlank() == false)
                     .forEach(e -> System.out.println(e.getHeureDebut()));
             // System.out.println(total_jour_travaille);
-            var prime_HS = heure_supplementaires/60 * user.getFonction().getSalaireSuppl()*2;
-            var prime_equipe = Math.round((heure_pointe_arr * user.getFonction().getSalaireSuppl()* 0.25 )* 100.0) / 100.0;
-            var transp = Math.round((total_jour_travaille * user.getFonction().getSalaireSuppl()*0.62) * 100.0) / 100.0;
+            var prime_HS = heure_supplementaires/60 * user.getFonction().getSalaireHeure()*2;
+            var prime_equipe = Math.round((heure_pointe_arr * user.getFonction().getSalaireHeure()* 0.25 )* 100.0) / 100.0;
+            var transp = Math.round((total_jour_travaille * user.getFonction().getSalaireHeure()*0.62) * 100.0) / 100.0;
             var prime_repas = total_jour_travaille * 8;
             var retenu_chomage = 0;
             var retenu_retraitre = 0;
-            var prestation = Math.round((heure_pointe_arr * user.getFonction().getSalaireSuppl()) * 100.0) / 100.0;
+            var prestation = Math.round((heure_pointe_arr * user.getFonction().getSalaireHeure()) * 100.0) / 100.0;
             
             var total_prime = (Math.round((prime_equipe + prime_repas + transp + prime_HS) * 100.0)) / 100.0;
             var salaire_brut = (Math.round((prestation + total_prime) * 100.0) / 100.0);

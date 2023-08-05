@@ -20,7 +20,7 @@ public class FontionModel {
     public FontionModel(Fonction item) {
         this.id=item.getId();
         this.typeFonction=item.getTypeFonction();
-        this.salaireSuppl=item.getSalaireSuppl();
+        this.salaireSuppl=item.getSalaireHeure();
         this.heureTravaille=item.getHeureTravaille();
         this.avantages=item.getAvantages().stream().map(e->e.getId()).collect(Collectors.toSet());
         this.departements=item.getDepartements().stream().map(e->e.getId()).collect(Collectors.toSet());

@@ -37,7 +37,7 @@ public class FonctionServiceImpl implements FonctionService{
             fonction =fonctionRepository.findById(fontionModel.getId()).get();
         }
         fonction.setHeureTravaille(fontionModel.getHeureTravaille());
-        fonction.setSalaireSuppl(fontionModel.getSalaireSuppl());
+        fonction.setSalaireHeure(fontionModel.getSalaireSuppl());
         fonction.setTypeFonction(fontionModel.getTypeFonction());
         fonctionRepository.saveAndFlush(fonction);
         return fontionModel;
