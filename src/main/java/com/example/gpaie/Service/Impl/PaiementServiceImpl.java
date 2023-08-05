@@ -417,12 +417,13 @@ public class PaiementServiceImpl implements PaiementService {
             table.addCell(PdfUtil.addCell(new Phrase("Brut", font8), true));
             table.addCell(PdfUtil.addCell(new Phrase("Net", font8), true));
             // table.endHeaders();
-            var presta = Math.round(paiement.getTotal_heure() * 17.5 * 100.0) / 100.0;
+            //var presta = Math.round(paiement.getTotal_heure() * 17.5 * 100.0) / 100.0;
+            var presta=paiement.getTotal_brut();
             table.addCell(PdfUtil.addCell(new Phrase("PR1"), false));
             table.addCell(PdfUtil.addCell(new Phrase("Prestation"), false));
             table.addCell(PdfUtil.addCell(new Phrase(""), false));
             table.addCell(PdfUtil.addCell(new Phrase((String.valueOf(paiement.getTotal_heure()))), false));
-            table.addCell(PdfUtil.addCell(new Phrase(String.valueOf(17.5)), false));
+            table.addCell(PdfUtil.addCell(new Phrase(String.valueOf(paiement.getUser().getFonction().getSalaireHeure())), false));
             table.addCell(PdfUtil.addCell(new Phrase(String.valueOf(presta)), false));
             table.addCell(PdfUtil.addCell(new Phrase(String.valueOf(presta)), false));
             // Prime equipe
@@ -435,12 +436,13 @@ public class PaiementServiceImpl implements PaiementService {
             table.addCell(PdfUtil.addCell(new Phrase(String.valueOf(prime)), false));
             table.addCell(PdfUtil.addCell(new Phrase(String.valueOf(prime)), false));
             // heure supp
-            var heuresupp = Math.round(paiement.getTotalHeureSuppl() * 35 * 100.0) / 100.0;
+           // var heuresupp = Math.round(paiement.getTotalHeureSuppl() * 35 * 100.0) / 100.0;
+            var heuresupp=Math.round(paiement.getTotalHeureSuppl() * paiement.getUser().getFonction().getSalaireHeure()*2 * 100.0) / 100.0;
             table.addCell(PdfUtil.addCell(new Phrase("HSP"), false));
             table.addCell(PdfUtil.addCell(new Phrase("Prime HS"), false));
             table.addCell(PdfUtil.addCell(new Phrase(""), false));
             table.addCell(PdfUtil.addCell(new Phrase((String.valueOf(paiement.getTotalHeureSuppl()))), false));
-            table.addCell(PdfUtil.addCell(new Phrase(String.valueOf(35)), false));
+            table.addCell(PdfUtil.addCell(new Phrase(String.valueOf(paiement.getUser().getFonction().getSalaireHeure()*2)), false));
             table.addCell(PdfUtil.addCell(new Phrase(String.valueOf(heuresupp)), false));
             table.addCell(PdfUtil.addCell(new Phrase(String.valueOf(heuresupp)), false));
             // suppl Transport
