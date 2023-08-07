@@ -179,13 +179,13 @@ public class PaiementServiceImpl implements PaiementService {
                return h_;
 
             }).reduce(0, (x, y) -> x + y); */
-            var heuresTrav = fichePaies.stream().filter(e -> e.getHeureDebut().length() > 2).filter(e->LocalDate.parse(e.getDate_presence()).getDayOfWeek().getValue()<6).map(e -> {
+            var heuresTrav = fichePaies.stream().filter(e -> e.getHeureDebut().length() > 2)
+            .filter(e->LocalDate.parse(e.getDate_presence()).getDayOfWeek().getValue()<6).map(e -> {
                 var h_=(int)Duration.between(LocalTime.parse(e.getHeureDebut()) , LocalTime.parse(e.getHeureFin())).toHours();
                 return minEpocheTo(e.getHeureDebut().toString(), e.getHeureFin().toString());
               // return h_;
 
             }).mapToDouble(f->f.doubleValue()).sum();
-            System.out.println(fichePaies.stream().filter(e -> e.getHeureDebut() != null).count());
             var heure_supplementaires = heureSupplRepository
                     .findAllByUserAndDateHeureSupplBetween(user, date_debut, date_fin)
                     .stream()
