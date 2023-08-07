@@ -2,6 +2,7 @@ package com.example.gpaie.Service.Impl;
 
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.time.Duration;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
@@ -21,6 +22,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.FileSystemResource;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
 import com.example.gpaie.Entity.Paiement;
@@ -70,6 +72,8 @@ public class PaiementServiceImpl implements PaiementService {
     private PlaningService planingService;
     @Value("${files.path}")
     private String filesPath;
+    @Value("${datepaie}")
+    private int daypaie;
     @Autowired
     private JavaMailSender javaMailSender;
 
@@ -109,9 +113,12 @@ public class PaiementServiceImpl implements PaiementService {
 
     @Override
     public List<PaiementModel> findAll() {
-        return paiementRepository.findAll().stream().map(this::paiementToPaiementModel).collect(Collectors.toList());
+        return paiementRepository.findAll().stream().filter(e->e.getMonth()==8).map(this::paiementToPaiementModel).collect(Collectors.toList());
     }
-
+    @Override
+    public List<PaiementModel> findAll(int month) {
+        return paiementRepository.findAll().stream().filter(e->e.getMonth()==month).map(this::paiementToPaiementModel).collect(Collectors.toList());
+    }
     @Override
     public Optional<PaiementModel> findOne(Long id) {
         return paiementRepository.findById(id).map(this::paiementToPaiementModel);
@@ -132,7 +139,17 @@ public class PaiementServiceImpl implements PaiementService {
     }
 
     @Override
-    public List<PaiementModel> calculSalaire(int month, int year,Long id_user) {
+    public List<PaiementModel> calculSalaire(int previopusmonth, int year,Long id_user) {
+        if(LocalDate.now().getDayOfMonth() != daypaie){
+            System.out.println(LocalDate.now().getDayOfMonth());
+            throw new UsernameNotFoundException("Could not calcul salaire in date = " + LocalDate.now().getDayOfMonth());
+        }
+        var month=previopusmonth;
+/*         if(month==1){
+            month=12;
+        }else{
+            month=previopusmonth-1;
+        } */
         DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
         var date_debut = LocalDate.of(year, month, 01);
         var date_fin = LocalDate.of(year, month, YearMonth.of(year, month).atEndOfMonth().getDayOfMonth());
@@ -142,6 +159,10 @@ public class PaiementServiceImpl implements PaiementService {
         List<PaiementModel> paiementModels = new ArrayList<>();
         for (User user : employes) {
             var paie = paiementRepository.findOneByMonthAndYearAndUser(month, year, user);
+            if (paie != null) {
+                paiementRepository.delete(paie);
+                paiementRepository.flush();
+            }
             if (paie == null) {
                 paie = new Paiement();
                 paie.setUser(user);
@@ -152,20 +173,32 @@ public class PaiementServiceImpl implements PaiementService {
             }
             var fichePaies = fichePaieService.findByEmployeBetwennDate(user.getId(),
                     date_debut.format(dateTimeFormatter), date_fin.format(dateTimeFormatter));
-            var heuresTrav = fichePaies.stream().filter(e -> e.getHeureDebut().length() > 2).map(e -> {
+         /*    var heuresTrav = fichePaies.stream().filter(e -> e.getHeureDebut().length() > 2).map(e -> {
+                var h_=(int)Duration.between(LocalTime.parse(e.getHeureDebut()) , LocalTime.parse(e.getHeureFin())).toHours();
+               // return minEpocheTo(e.getHeureDebut().toString(), e.getHeureFin().toString());
+               return h_;
+
+            }).reduce(0, (x, y) -> x + y); */
+            var heuresTrav = fichePaies.stream().filter(e -> e.getHeureDebut().length() > 2).filter(e->LocalDate.parse(e.getDate_presence()).getDayOfWeek().getValue()<6).map(e -> {
+                var h_=(int)Duration.between(LocalTime.parse(e.getHeureDebut()) , LocalTime.parse(e.getHeureFin())).toHours();
                 return minEpocheTo(e.getHeureDebut().toString(), e.getHeureFin().toString());
-            }).reduce(0, (x, y) -> x + y);
+              // return h_;
+
+            }).mapToDouble(f->f.doubleValue()).sum();
+            System.out.println(fichePaies.stream().filter(e -> e.getHeureDebut() != null).count());
             var heure_supplementaires = heureSupplRepository
                     .findAllByUserAndDateHeureSupplBetween(user, date_debut, date_fin)
                     .stream()
                     .map(e -> minEpocheTo(e.getHeureDebut().toString(), e.getHeureFin().toString()))
+                    .mapToDouble(f->f.doubleValue())
                     .reduce(0, (x, y) -> x + y);
 
-            var heure_pointe = (double) (heuresTrav.doubleValue() / 60);
+            var heure_pointe = (double) (heuresTrav/ 60);
             var heure_pointe_arr = Math.round(heure_pointe * 100.0) / 100.0;
             var total_jour_travaille = fichePaies.stream().filter(e -> e.getHeureDebut().isBlank() == false).count();
-            fichePaies.stream().filter(e -> e.getHeureDebut().isBlank() == false)
-                    .forEach(e -> System.out.println(e.getHeureDebut()));
+            System.out.println(heure_pointe);
+            /* fichePaies.stream().filter(e -> e.getHeureDebut().isBlank() == false)
+                    .forEach(e -> System.out.println(e.getHeureDebut())); */
             // System.out.println(total_jour_travaille);
             var prime_HS = heure_supplementaires/60 * user.getFonction().getSalaireHeure()*2;
             var prime_equipe = Math.round((heure_pointe_arr * user.getFonction().getSalaireHeure()* 0.25 )* 100.0) / 100.0;

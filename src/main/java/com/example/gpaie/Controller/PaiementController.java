@@ -32,7 +32,7 @@ public class PaiementController {
     private FileService fileService;
     @GetMapping({ "/paiements/month/{month}" })
 	public List<PaiementModel> findAll(@PathVariable("month") int month ) {
-		return paiementService.findAll();
+		return paiementService.findAll(month);
 	}
     @GetMapping({ "/paiements" })
 	public List<PaiementModel> findAll() {

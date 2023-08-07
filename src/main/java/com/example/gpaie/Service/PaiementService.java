@@ -35,7 +35,7 @@ public interface PaiementService {
      * @return the list of entities.
      */
     List<PaiementModel> findAll();
-
+    List<PaiementModel> findAll(int month);
     /**
      * Get the "id" zone.
      *
