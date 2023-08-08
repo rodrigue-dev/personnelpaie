@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.example.gpaie.Model.AvantageFonctionModel;
 import com.example.gpaie.Model.FontionModel;
 import com.example.gpaie.Model.fonctionItemRequest;
 import com.example.gpaie.Service.FonctionService;
@@ -81,11 +82,11 @@ public class FonctionController {
         } 
     }
     @PostMapping("/fonctions/removeavantage")
-    public ResponseEntity<FontionModel> removeAvantage(@RequestBody fonctionItemRequest fontionModel){
+    public ResponseEntity<?> removeAvantage(@RequestBody AvantageFonctionModel fontionModel){
         
          try {
-            FontionModel newfontionModel= fonctionService.removeAvantage(fontionModel);
-            return new ResponseEntity<>(newfontionModel, HttpStatus.CREATED);
+            fonctionService.removeAvantage(fontionModel);
+            return new ResponseEntity<>(null, HttpStatus.CREATED);
         } catch (Exception e) {
             System.out.println(e.getMessage());
             return new ResponseEntity<>(null, HttpStatus.EXPECTATION_FAILED);

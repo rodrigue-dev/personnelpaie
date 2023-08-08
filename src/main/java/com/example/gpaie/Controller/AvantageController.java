@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.example.gpaie.Model.AvantageFonctionModel;
 import com.example.gpaie.Model.AvantageModel;
 import com.example.gpaie.Service.AvantageService;
 
@@ -28,7 +29,7 @@ public class AvantageController {
 		return avantageService.findAll();
 	}
     @GetMapping("/avantages/fonction/{id}")
-    public List<AvantageModel> getByFonction(@PathVariable("id") Long id) {
+    public List<AvantageFonctionModel> getByFonction(@PathVariable("id") Long id) {
         return avantageService.findAllByFonction(id);
     }
     @GetMapping("/avantages/{id}")

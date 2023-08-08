@@ -3,6 +3,7 @@ package com.example.gpaie.Service;
 import java.util.List;
 import java.util.Optional;
 
+import com.example.gpaie.Model.AvantageFonctionModel;
 import com.example.gpaie.Model.FontionModel;
 import com.example.gpaie.Model.fonctionItemRequest;
 
@@ -15,7 +16,7 @@ public interface FonctionService {
      */
     FontionModel save(FontionModel userRequest);
     FontionModel addAvantage(fonctionItemRequest aRequest);
-    FontionModel removeAvantage(fonctionItemRequest aRequest);
+    void removeAvantage(AvantageFonctionModel aRequest);
     FontionModel addDepartement(fonctionItemRequest aRequest);
     FontionModel removeDepartement(fonctionItemRequest aRequest);
 

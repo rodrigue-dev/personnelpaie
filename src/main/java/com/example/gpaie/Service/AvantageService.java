@@ -3,6 +3,7 @@ package com.example.gpaie.Service;
 import java.util.List;
 import java.util.Optional;
 
+import com.example.gpaie.Model.AvantageFonctionModel;
 import com.example.gpaie.Model.AvantageModel;
 
 public interface AvantageService {
@@ -44,5 +45,5 @@ public interface AvantageService {
      */
     void delete(Long id);
 
-    List<AvantageModel> findAllByFonction(Long id);
+    List<AvantageFonctionModel> findAllByFonction(Long id);
 }

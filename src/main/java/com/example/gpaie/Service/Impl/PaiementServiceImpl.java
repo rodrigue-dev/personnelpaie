@@ -25,10 +25,12 @@ import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
+import com.example.gpaie.Entity.Avantage_fontion;
 import com.example.gpaie.Entity.Paiement;
 import com.example.gpaie.Entity.User;
 import com.example.gpaie.Model.EmailDetails;
 import com.example.gpaie.Model.PaiementModel;
+import com.example.gpaie.Repository.AvantageFonctionRepository;
 import com.example.gpaie.Repository.HeureSupplRepository;
 import com.example.gpaie.Repository.PaiementRepository;
 import com.example.gpaie.Repository.UserRepository;
@@ -66,6 +68,8 @@ public class PaiementServiceImpl implements PaiementService {
     private HeureSupplRepository heureSupplRepository;
     @Autowired
     private UserRepository userRepository;
+    @Autowired
+    private AvantageFonctionRepository avantageFonctionRepository;
     @Autowired
     private FichePresenceService fichePaieService;
     @Autowired
@@ -214,6 +218,8 @@ public class PaiementServiceImpl implements PaiementService {
             var total_retenu = cotisation_cnss + retenu_chomage + retenu_retraitre;
             var salaire_net = Math.round((salaire_brut - total_retenu) * 100.0)/ 100.0;
             if(total_jour_travaille>0){
+                List<Avantage_fontion>lAvantage_fontions=avantageFonctionRepository.findAllByFonction(user.getFonction());
+                var total=lAvantage_fontions.stream().map(x->x.getMontant()).mapToDouble(x->Double.parseDouble(x.toString())).sum();
                 paie.setPrime_HS(prime_HS);
                 paie.setPrime_prestation(prestation);
                 paie.setTotalHeureSuppl(heure_supplementaires/60);
@@ -221,7 +227,7 @@ public class PaiementServiceImpl implements PaiementService {
                 paie.setPrime_equipe(prime_equipe);
                 paie.setSuppl_transport(transp);
                 paie.setTotal_heure(heure_pointe_arr);
-                paie.setTotal_prime(total_prime);
+                paie.setTotal_prime(total+prime_HS);
                 paie.setRetenu_chomage(retenu_chomage);
                 paie.setRetenu_retraite(retenu_retraitre);
                 paie.setRetenu_total(total_retenu);
@@ -399,7 +405,7 @@ public class PaiementServiceImpl implements PaiementService {
         try {
             Path file = Paths.get(filesPath);
             FileOutputStream pdfOutputFile = new FileOutputStream(filesPath + "/" + paiement.getId() + ".pdf");
-
+            List<Avantage_fontion>lAvantage_fontions=avantageFonctionRepository.findAllByFonction(paiement.getUser().getFonction());
             final PdfWriter pdfWriter = PdfWriter.getInstance(document, pdfOutputFile);
             Font font14 = FontFactory.getFont(FontFactory.HELVETICA_BOLD, 14);
             document.open(); // Open the Document
@@ -459,15 +465,16 @@ public class PaiementServiceImpl implements PaiementService {
             table.addCell(PdfUtil.addCell(new Phrase(String.valueOf(paiement.getUser().getFonction().getSalaireHeure())), false));
             table.addCell(PdfUtil.addCell(new Phrase(String.valueOf(presta)), false));
             table.addCell(PdfUtil.addCell(new Phrase(String.valueOf(presta)), false));
+
             // Prime equipe
             var prime = Math.round(paiement.getTotal_heure() * 1.25 * 100.0) / 100.0;
-            table.addCell(PdfUtil.addCell(new Phrase("EQ"), false));
+/*             table.addCell(PdfUtil.addCell(new Phrase("EQ"), false));
             table.addCell(PdfUtil.addCell(new Phrase("Prime equipe"), false));
             table.addCell(PdfUtil.addCell(new Phrase(""), false));
             table.addCell(PdfUtil.addCell(new Phrase((String.valueOf(paiement.getTotal_heure()))), false));
             table.addCell(PdfUtil.addCell(new Phrase(String.valueOf(1.25)), false));
             table.addCell(PdfUtil.addCell(new Phrase(String.valueOf(prime)), false));
-            table.addCell(PdfUtil.addCell(new Phrase(String.valueOf(prime)), false));
+            table.addCell(PdfUtil.addCell(new Phrase(String.valueOf(prime)), false)); */
             // heure supp
            // var heuresupp = Math.round(paiement.getTotalHeureSuppl() * 35 * 100.0) / 100.0;
             var heuresupp=Math.round(paiement.getTotalHeureSuppl() * paiement.getUser().getFonction().getSalaireHeure()*2 * 100.0) / 100.0;
@@ -479,23 +486,26 @@ public class PaiementServiceImpl implements PaiementService {
             table.addCell(PdfUtil.addCell(new Phrase(String.valueOf(heuresupp)), false));
             table.addCell(PdfUtil.addCell(new Phrase(String.valueOf(heuresupp)), false));
             // suppl Transport
-            var transp = Math.round(paiement.getTotalJours() * 1.62 * 100.0) / 100.0;
+/*             var transp = Math.round(paiement.getTotalJours() * 1.62 * 100.0) / 100.0;
             table.addCell(PdfUtil.addCell(new Phrase("PR1"), false));
             table.addCell(PdfUtil.addCell(new Phrase("Supp Transport"), false));
             table.addCell(PdfUtil.addCell(new Phrase(""), false));
             table.addCell(PdfUtil.addCell(new Phrase((String.valueOf(paiement.getTotalJours()))), false));
             table.addCell(PdfUtil.addCell(new Phrase(String.valueOf(1.62)), false));
             table.addCell(PdfUtil.addCell(new Phrase(String.valueOf(transp)), false));
-            table.addCell(PdfUtil.addCell(new Phrase(String.valueOf(transp)), false));
+            table.addCell(PdfUtil.addCell(new Phrase(String.valueOf(transp)), false)); */
             // cheque repas
             // var check= Math.round(heure_pointe * 100.0) / 100.0;
-            table.addCell(PdfUtil.addCell(new Phrase("MCW"), false));
-            table.addCell(PdfUtil.addCell(new Phrase("Cheque repas"), false));
+            for (Avantage_fontion f : lAvantage_fontions) {
+            table.addCell(PdfUtil.addCell(new Phrase(f.getFonction().getTypeFonction().toUpperCase().substring(0, 2)+"-"+f.getAvantage().getTypeAvantage().toUpperCase().substring(0, 2)), false));
+            table.addCell(PdfUtil.addCell(new Phrase(f.getAvantage().getTypeAvantage()), false));
             table.addCell(PdfUtil.addCell(new Phrase(String.valueOf(paiement.getTotalJours())), false));
-            table.addCell(PdfUtil.addCell(new Phrase(String.valueOf(paiement.getTotalJours() * 8)), false));
-            table.addCell(PdfUtil.addCell(new Phrase(String.valueOf(8)), false));
-            table.addCell(PdfUtil.addCell(new Phrase(String.valueOf(paiement.getTotalJours() * 8)), false));
-            table.addCell(PdfUtil.addCell(new Phrase(String.valueOf(paiement.getTotalJours() * 8)), false));
+            table.addCell(PdfUtil.addCell(new Phrase(String.valueOf("")), false));
+            table.addCell(PdfUtil.addCell(new Phrase(String.valueOf(f.getMontant())), false));
+            table.addCell(PdfUtil.addCell(new Phrase(String.valueOf(f.getMontant())), false));
+            table.addCell(PdfUtil.addCell(new Phrase(String.valueOf(f.getMontant())), false));
+            }
+
             // total
             PdfPCell pdfPCell = new PdfPCell(new Phrase("Total"));
             pdfPCell.setColspan(2);

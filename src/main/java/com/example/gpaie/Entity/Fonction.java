@@ -31,11 +31,6 @@ public class Fonction {
     @JsonIgnore
     @ManyToMany
     @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
-    private Set<Avantage> avantages = new HashSet<>();
-
-    @JsonIgnore
-    @ManyToMany
-    @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
     private Set<Departement> departements = new HashSet<>();
 
 
@@ -87,14 +82,6 @@ public class Fonction {
 
     public void setHeureTravaille(int heureTravaille) {
         this.heureTravaille = heureTravaille;
-    }
-
-    public Set<Avantage> getAvantages() {
-        return this.avantages;
-    }
-
-    public void setAvantages(Set<Avantage> avantages) {
-        this.avantages = avantages;
     }
 
     public Set<Departement> getDepartements() {

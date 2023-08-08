@@ -11,8 +11,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.example.gpaie.Entity.Avantage;
+import com.example.gpaie.Entity.Avantage_fontion;
 import com.example.gpaie.Entity.Fonction;
+import com.example.gpaie.Model.AvantageFonctionModel;
 import com.example.gpaie.Model.AvantageModel;
+import com.example.gpaie.Repository.AvantageFonctionRepository;
 import com.example.gpaie.Repository.AvantageRepository;
 import com.example.gpaie.Repository.FonctionRepository;
 import com.example.gpaie.Service.AvantageService;
@@ -24,6 +27,8 @@ public class AvantageServiceImpl implements AvantageService{
     private AvantageRepository avantageRepository;
     @Autowired
     private FonctionRepository fonctionRepository;
+    @Autowired
+    private AvantageFonctionRepository avantageFonctionRepository;
     @Override
     public AvantageModel save(AvantageModel avantageModel) {
         Avantage avantage;
@@ -60,12 +65,14 @@ public class AvantageServiceImpl implements AvantageService{
     public AvantageModel avantageToAvantageModel(Avantage avantage) {
         return new AvantageModel(avantage);
     }
-
+    public AvantageFonctionModel avantageFonctionToAvantageFonctionModel(Avantage_fontion avantagegFontion) {
+        return new AvantageFonctionModel(avantagegFontion);
+    }
     @Override
-    public List<AvantageModel> findAllByFonction(Long id) {
+    public List<AvantageFonctionModel> findAllByFonction(Long id) {
         Fonction fonction=fonctionRepository.findById(id).get();
-      return  fonction.getAvantages().stream().map(this::avantageToAvantageModel).collect(Collectors.toList());
-
+     // return  fonction.getAvantages().stream().map(this::avantageToAvantageModel).collect(Collectors.toList());
+     return avantageFonctionRepository.findAllByFonction(fonction).stream().map(this::avantageFonctionToAvantageFonctionModel).collect(Collectors.toList());
     }
     
 }

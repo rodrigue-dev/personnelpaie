@@ -11,10 +11,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.example.gpaie.Entity.Avantage;
+import com.example.gpaie.Entity.Avantage_fontion;
 import com.example.gpaie.Entity.Departement;
 import com.example.gpaie.Entity.Fonction;
+import com.example.gpaie.Model.AvantageFonctionModel;
 import com.example.gpaie.Model.FontionModel;
 import com.example.gpaie.Model.fonctionItemRequest;
+import com.example.gpaie.Repository.AvantageFonctionRepository;
 import com.example.gpaie.Repository.AvantageRepository;
 import com.example.gpaie.Repository.DepartementRepository;
 import com.example.gpaie.Repository.FonctionRepository;
@@ -28,6 +31,8 @@ public class FonctionServiceImpl implements FonctionService{
     private AvantageRepository avantageRepository;
     @Autowired
     private DepartementRepository departementRepository;
+    @Autowired
+    private AvantageFonctionRepository avantageFonctionRepository;
     @Override
     public FontionModel save(FontionModel fontionModel) {
         Fonction fonction;
@@ -67,9 +72,12 @@ public class FonctionServiceImpl implements FonctionService{
      var fonctionOption=fonctionRepository.findById(aRequest.getFonction_id());
      if(fonctionOption.isPresent()){
        var fonction=fonctionOption.get();
-           Set<Avantage>avantages=aRequest.getItems().stream().map(e->avantageRepository.findById(e).get()).collect(Collectors.toSet());
-    fonction.getAvantages().addAll(avantages);
-    fonctionRepository.saveAndFlush(fonction);
+       var avt_f=new Avantage_fontion();
+       avt_f.setAvantage(avantageRepository.findById(aRequest.getAvantage_id()).get());
+       avt_f.setFonction(fonction);
+       avt_f.setMontant(aRequest.getMontant());
+       avantageFonctionRepository.save(avt_f);
+       avantageFonctionRepository.flush();
      return new FontionModel(fonction);
      }else{
         return new FontionModel();
@@ -85,12 +93,9 @@ public class FonctionServiceImpl implements FonctionService{
      return new FontionModel(fonction);
     }
     @Override
-    public FontionModel removeAvantage(fonctionItemRequest aRequest) {
-        Fonction fonction=fonctionRepository.findById(aRequest.getFonction_id()).get();
-        Set<Avantage>avantages=aRequest.getItems().stream().map(e->avantageRepository.findById(e).get()).collect(Collectors.toSet());
-       fonction.getAvantages().removeAll(avantages);
-       fonctionRepository.saveAndFlush(fonction);
-        return new FontionModel(fonction);
+    public void removeAvantage(AvantageFonctionModel aRequest) {
+        avantageFonctionRepository.deleteById(aRequest.getId());
+        avantageFonctionRepository.flush();
     }
     @Override
     public FontionModel removeDepartement(fonctionItemRequest aRequest) {
