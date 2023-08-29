@@ -24,6 +24,7 @@ public class HeureSupplModel {
         this.heureFin=hSupplementaire.getHeureFin().format(timeFormatter);
         this.user_id=hSupplementaire.getUser().getId();
         this.user_name=hSupplementaire.getUser().getNom()+' '+hSupplementaire.getUser().getPrenom();
+        this.id=hSupplementaire.getId();
     }
 
     public String getDateHeureSuppl() {

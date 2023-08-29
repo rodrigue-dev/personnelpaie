@@ -12,6 +12,7 @@ import java.time.YearMonth;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
@@ -155,10 +156,10 @@ public class PaiementServiceImpl implements PaiementService {
             month=previopusmonth-1;
         } */
         DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
-        var date_debut = LocalDate.of(year, month, 01);
+        var date_debut = LocalDate.of(year, month, 1);
         var date_fin = LocalDate.of(year, month, YearMonth.of(year, month).atEndOfMonth().getDayOfMonth());
-        var employes = userRepository.findAll().stream().filter(e->e.isEnabled())
-        .filter(f->f.getId() !=id_user)
+        var employes = userRepository.findAll().stream().filter(User::isEnabled)
+        .filter(f-> !Objects.equals(f.getId(), id_user))
         .collect(Collectors.toList());
         List<PaiementModel> paiementModels = new ArrayList<>();
         for (User user : employes) {
@@ -189,17 +190,17 @@ public class PaiementServiceImpl implements PaiementService {
                 return minEpocheTo(e.getHeureDebut().toString(), e.getHeureFin().toString());
               // return h_;
 
-            }).mapToDouble(f->f.doubleValue()).sum();
+            }).mapToDouble(Integer::doubleValue).sum();
             var heure_supplementaires = heureSupplRepository
                     .findAllByUserAndDateHeureSupplBetween(user, date_debut, date_fin)
                     .stream()
                     .map(e -> minEpocheTo(e.getHeureDebut().toString(), e.getHeureFin().toString()))
-                    .mapToDouble(f->f.doubleValue())
-                    .reduce(0, (x, y) -> x + y);
+                    .mapToDouble(Integer::doubleValue)
+                    .reduce(0, Double::sum);
 
             var heure_pointe = (double) (heuresTrav/ 60);
             var heure_pointe_arr = Math.round(heure_pointe * 100.0) / 100.0;
-            var total_jour_travaille = fichePaies.stream().filter(e -> e.getHeureDebut().isBlank() == false).count();
+            var total_jour_travaille = fichePaies.stream().filter(e -> !e.getHeureDebut().isBlank()).count();
             System.out.println(heure_pointe);
             /* fichePaies.stream().filter(e -> e.getHeureDebut().isBlank() == false)
                     .forEach(e -> System.out.println(e.getHeureDebut())); */
@@ -219,7 +220,7 @@ public class PaiementServiceImpl implements PaiementService {
             var salaire_net = Math.round((salaire_brut - total_retenu) * 100.0)/ 100.0;
             if(total_jour_travaille>0){
                 List<Avantage_fontion>lAvantage_fontions=avantageFonctionRepository.findAllByFonction(user.getFonction());
-                var total=lAvantage_fontions.stream().map(x->x.getMontant()).mapToDouble(x->Double.parseDouble(x.toString())).sum();
+                var total=lAvantage_fontions.stream().map(Avantage_fontion::getMontant).mapToDouble(x->Double.parseDouble(x.toString())).sum();
                 paie.setPrime_HS(prime_HS);
                 paie.setPrime_prestation(prestation);
                 paie.setTotalHeureSuppl(heure_supplementaires/60);
@@ -233,7 +234,7 @@ public class PaiementServiceImpl implements PaiementService {
                 paie.setRetenu_total(total_retenu);
                 paie.setTotal_brut(salaire_brut);
                 paie.setTotal_net(salaire_net);
-                paie.setTotal_impossable(salaire_net);
+                paie.setTotal_impossable(salaire_brut+total+prime_HS);
                 paie.setCotisationCnss(cotisation_cnss); 
             }else{
                 paie.setPrime_HS(0);
@@ -277,17 +278,17 @@ public class PaiementServiceImpl implements PaiementService {
                     date_debut.format(dateTimeFormatter), date_fin.format(dateTimeFormatter));
             var heuresTrav = fichePaies.stream().filter(e -> e.getHeureDebut().length() > 2).map(e -> {
                 return minEpocheTo(e.getHeureDebut().toString(), e.getHeureFin().toString());
-            }).reduce(0, (x, y) -> x + y);
+            }).reduce(0, Integer::sum);
             var heure_supplementaires = heureSupplRepository
                     .findAllByUserAndDateHeureSupplBetween(paiement.getUser(), date_debut, date_fin)
                     .stream()
                     .map(e -> minEpocheTo(e.getHeureDebut().toString(), e.getHeureFin().toString()))
-                    .reduce(0, (x, y) -> x + y);
+                    .reduce(0, Integer::sum);
 
             var heure_pointe = (double) (heuresTrav.doubleValue() / 60);
             var heure_pointe_arr = Math.round(heure_pointe * 100.0) / 100.0;
-            var total_jour_travaille = fichePaies.stream().filter(e -> e.getHeureDebut().isBlank() == false).count();
-            fichePaies.stream().filter(e -> e.getHeureDebut().isBlank() == false)
+            var total_jour_travaille = fichePaies.stream().filter(e -> !e.getHeureDebut().isBlank()).count();
+            fichePaies.stream().filter(e -> !e.getHeureDebut().isBlank())
                     .forEach(e -> System.out.println(e.getHeureDebut()));
             
             var prime_HS = heure_supplementaires/60 * 35;
@@ -306,7 +307,7 @@ public class PaiementServiceImpl implements PaiementService {
             if(total_jour_travaille>0){
                 paie.setPrime_HS(prime_HS);
                 paie.setPrime_prestation(prestation);
-                paie.setTotalHeureSuppl(heure_supplementaires/60);
+                paie.setTotalHeureSuppl((double) heure_supplementaires /60);
                 paie.setTotalJours((int) total_jour_travaille);
                 paie.setPrime_equipe(prime_equipe);
                 paie.setSuppl_transport(transp);
@@ -374,9 +375,9 @@ public class PaiementServiceImpl implements PaiementService {
     @Override
     public List<PaiementModel> calculHeureSupp(int month, int year,Long id_user) {
         DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
-        var date_debut = LocalDate.of(year, month, 01);
+        var date_debut = LocalDate.of(year, month, 1);
         var date_fin = LocalDate.of(year, month, YearMonth.of(year, month).atEndOfMonth().getDayOfMonth());
-        var employes = userRepository.findAll().stream().filter(e->e.isEnabled())
+        var employes = userRepository.findAll().stream().filter(User::isEnabled)
         .filter(f->f.getId() !=id_user)
         .collect(Collectors.toList());
         List<PaiementModel> paiementModels = new ArrayList<>();
@@ -384,7 +385,7 @@ public class PaiementServiceImpl implements PaiementService {
             var paie = paiementRepository.findOneByMonthAndYearAndUser(month, year, user);
             var heures = heureSupplRepository.findAllByUserAndDateHeureSupplBetween(user, date_debut, date_fin).stream()
                     .map(e -> minEpocheTo(e.getHeureDebut().toString(), e.getHeureFin().toString()))
-                    .reduce(0, (x, y) -> x + y);
+                    .reduce(0, Integer::sum);
             var paiementModel = new PaiementModel(paie);
             paiementModel.setTotalHeureSuppl(heures);
             paiementModel.setPrime_HS(heures * 35);
@@ -412,7 +413,7 @@ public class PaiementServiceImpl implements PaiementService {
             //var month=YearMonth.of(paiement.getYear(), paiement.getMonth()).getMonth();
            // var start=paiement.getDatePaie().withDayOfMonth(1);
            //var lastday= paiement.getDatePaie().withDayOfMonth(paiement.getDatePaie().getMonth().length(paiement.getDatePaie().isLeapYear()));
-            var date_debut = LocalDate.of(paiement.getYear(), paiement.getMonth(), 01);
+            var date_debut = LocalDate.of(paiement.getYear(), paiement.getMonth(), 1);
             var date_fin = LocalDate.of(paiement.getYear(), paiement.getMonth(), YearMonth.of(paiement.getYear(), paiement.getMonth()).atEndOfMonth().getDayOfMonth());
             Chunk chunktitle = new Chunk("Fiche de paie "+date_debut+" -"+date_fin, font14);
             chunktitle.setUnderline(new Color(0x00, 0x00, 0x00), 2.0f, 0.0f, -5.0f, 0, PdfContentByte.LINE_CAP_ROUND);
@@ -497,7 +498,8 @@ public class PaiementServiceImpl implements PaiementService {
             // cheque repas
             // var check= Math.round(heure_pointe * 100.0) / 100.0;
             for (Avantage_fontion f : lAvantage_fontions) {
-            table.addCell(PdfUtil.addCell(new Phrase(f.getFonction().getTypeFonction().toUpperCase().substring(0, 2)+"-"+f.getAvantage().getTypeAvantage().toUpperCase().substring(0, 2)), false));
+            table.addCell(PdfUtil.addCell(new Phrase(f.getFonction().getTypeFonction().toUpperCase().substring(0, 2)
+                    +"-"+f.getAvantage().getTypeAvantage().toUpperCase().substring(0, 2)), false));
             table.addCell(PdfUtil.addCell(new Phrase(f.getAvantage().getTypeAvantage()), false));
             table.addCell(PdfUtil.addCell(new Phrase(String.valueOf(paiement.getTotalJours())), false));
             table.addCell(PdfUtil.addCell(new Phrase(String.valueOf("")), false));

@@ -70,6 +70,7 @@ public class HeureSupplServiceImpl implements HeureSupplService{
     @Override
     public void delete(Long id) {
         heureSupplRepository.deleteById(id);
+        heureSupplRepository.flush();
     }
     @Override
     public List<HeureSupplModel> heureSuppByUser(Long userid) {
