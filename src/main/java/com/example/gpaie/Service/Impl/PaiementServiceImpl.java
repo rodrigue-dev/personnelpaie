@@ -555,6 +555,11 @@ public class PaiementServiceImpl implements PaiementService {
             total_payer.add(" " + paiement.getTotal_net());
             document.add(total_payer);
 
+            Paragraph compte = new Paragraph();
+            Chunk comptechunck = new Chunk("A PAYER SUR LE COMPTE "+paiement.getUser().getCompteIban(), font8);
+            compte.add(comptechunck);
+            document.add(compte);
+
             document.close(); // 5) Close the Document
 
             pdfWriter.close();// 6) close the File writer

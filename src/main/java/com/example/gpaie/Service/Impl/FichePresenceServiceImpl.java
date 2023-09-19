@@ -38,60 +38,69 @@ public class FichePresenceServiceImpl implements FichePresenceService{
         FichePresence fichePresence;
         DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
         DateTimeFormatter timeFormatter = DateTimeFormatter.ofPattern("HH:mm");
-        if(fichePresenceModel.getId()== null){
-            fichePresence=new FichePresence();
-            fichePresence.setUser(userRepository.findById(fichePresenceModel.getUser_id()).get());
-            fichePresence.setDatePresence(LocalDate.parse(fichePresenceModel.getDate_presence(), dateTimeFormatter));
-        }else{
-            fichePresence =fichePresenceRepository.findById(fichePresenceModel.getId()).get();
-            
-        }
-        if(fichePresenceModel.getHeureDebut() !=null){
-        fichePresence.setHeureDebut(LocalTime.parse(fichePresenceModel.getHeureDebut().toString(), timeFormatter));
-        }
-        if(fichePresenceModel.getHeureFin() !=null){
-            var heure=LocalTime.parse(fichePresenceModel.getHeureFin().toString(), timeFormatter);
-            var duration=Duration.between(fichePresence.getHeureDebut(),heure).toHours();
-           // if(Duration.between(heure, fichePresence.getHeureDebut())>10)
-           if(fichePresence.getUser().getTypeplaning()==0){
-            fichePresence.setHeureFin(fichePresence.getHeureDebut().plusHours(8));
-            if(duration>8){
-                var heurSupp=new HeureSupplementaire();
-                heurSupp.setUser(fichePresence.getUser());
-                heurSupp.setHeureDebut(fichePresence.getHeureDebut().plusHours(8));
-                heurSupp.setHeureFin(LocalTime.parse(fichePresenceModel.getHeureFin().toString(), timeFormatter));
-                heurSupp.setDateHeureSuppl(fichePresence.getDatePresence());
-                heureSupplService.saveAndFlush(heurSupp);
-               }
-           }else if(fichePresence.getUser().getTypeplaning()==1){
-            fichePresence.setHeureFin(fichePresence.getHeureDebut().plusHours(4));
-            if(duration>4){
-                var heurSupp=new HeureSupplementaire();
-                heurSupp.setUser(fichePresence.getUser());
-                heurSupp.setHeureDebut(fichePresence.getHeureDebut().plusHours(4));
-                heurSupp.setHeureFin(LocalTime.parse(fichePresenceModel.getHeureFin().toString(), timeFormatter));
-                heurSupp.setDateHeureSuppl(fichePresence.getDatePresence());
-                heureSupplService.saveAndFlush(heurSupp);
-               }
+        var usr_=userRepository.findById(fichePresenceModel.getUser_id()).get();
+
+       var dt=LocalDate.parse(fichePresenceModel.getDate_presence(), dateTimeFormatter);
+        System.out.println("********"+dt+"*******"+usr_.getCreatedAt().toLocalDate());
+       if (dt.isAfter(usr_.getCreatedAt().toLocalDate())){
+           if(fichePresenceModel.getId()== null){
+               fichePresence=new FichePresence();
+               fichePresence.setUser(userRepository.findById(fichePresenceModel.getUser_id()).get());
+               fichePresence.setDatePresence(LocalDate.parse(fichePresenceModel.getDate_presence(), dateTimeFormatter));
            }else{
-            fichePresence.setHeureFin(fichePresence.getHeureDebut().plusHours(8));
-            if(duration>8){
-                var heurSupp=new HeureSupplementaire();
-                heurSupp.setUser(fichePresence.getUser());
-                heurSupp.setHeureDebut(fichePresence.getHeureDebut().plusHours(8));
-                heurSupp.setHeureFin(LocalTime.parse(fichePresenceModel.getHeureFin().toString(), timeFormatter));
-                heurSupp.setDateHeureSuppl(fichePresence.getDatePresence());
-                heureSupplService.saveAndFlush(heurSupp);
-               }
+               fichePresence =fichePresenceRepository.findById(fichePresenceModel.getId()).get();
+
            }
-           
-           System.out.println("-----------###############-------------");
-           System.out.println(duration);
-          
-           //  fichePresence.setHeureFin(LocalTime.parse(fichePresenceModel.getHeureFin().toString(), timeFormatter));
-        }
-        fichePresenceRepository.saveAndFlush(fichePresence);
-        return fichePresenceModel;
+           if(fichePresenceModel.getHeureDebut() !=null){
+               fichePresence.setHeureDebut(LocalTime.parse(fichePresenceModel.getHeureDebut().toString(), timeFormatter));
+           }
+           if(fichePresenceModel.getHeureFin() !=null){
+               var heure=LocalTime.parse(fichePresenceModel.getHeureFin().toString(), timeFormatter);
+               var duration=Duration.between(fichePresence.getHeureDebut(),heure).toHours();
+               // if(Duration.between(heure, fichePresence.getHeureDebut())>10)
+               if(fichePresence.getUser().getTypeplaning()==0){
+                   fichePresence.setHeureFin(fichePresence.getHeureDebut().plusHours(8));
+                   if(duration>8){
+                       var heurSupp=new HeureSupplementaire();
+                       heurSupp.setUser(fichePresence.getUser());
+                       heurSupp.setHeureDebut(fichePresence.getHeureDebut().plusHours(8));
+                       heurSupp.setHeureFin(LocalTime.parse(fichePresenceModel.getHeureFin().toString(), timeFormatter));
+                       heurSupp.setDateHeureSuppl(fichePresence.getDatePresence());
+                       heureSupplService.saveAndFlush(heurSupp);
+                   }
+               }else if(fichePresence.getUser().getTypeplaning()==1){
+                   fichePresence.setHeureFin(fichePresence.getHeureDebut().plusHours(4));
+                   if(duration>4){
+                       var heurSupp=new HeureSupplementaire();
+                       heurSupp.setUser(fichePresence.getUser());
+                       heurSupp.setHeureDebut(fichePresence.getHeureDebut().plusHours(4));
+                       heurSupp.setHeureFin(LocalTime.parse(fichePresenceModel.getHeureFin().toString(), timeFormatter));
+                       heurSupp.setDateHeureSuppl(fichePresence.getDatePresence());
+                       heureSupplService.saveAndFlush(heurSupp);
+                   }
+               }else{
+                   fichePresence.setHeureFin(fichePresence.getHeureDebut().plusHours(8));
+                   if(duration>8){
+                       var heurSupp=new HeureSupplementaire();
+                       heurSupp.setUser(fichePresence.getUser());
+                       heurSupp.setHeureDebut(fichePresence.getHeureDebut().plusHours(8));
+                       heurSupp.setHeureFin(LocalTime.parse(fichePresenceModel.getHeureFin().toString(), timeFormatter));
+                       heurSupp.setDateHeureSuppl(fichePresence.getDatePresence());
+                       heureSupplService.saveAndFlush(heurSupp);
+                   }
+               }
+
+               System.out.println("-----------###############-------------");
+               System.out.println(duration);
+
+               //  fichePresence.setHeureFin(LocalTime.parse(fichePresenceModel.getHeureFin().toString(), timeFormatter));
+           }
+           fichePresenceRepository.saveAndFlush(fichePresence);
+           return fichePresenceModel;
+       }else {
+           throw new UnsupportedOperationException("Unimplemented method 'partialUpdate'");
+       }
+
     }
     @Override
     public Optional<FichePresenceModel> partialUpdate(FichePresenceModel zoneDTO) {
