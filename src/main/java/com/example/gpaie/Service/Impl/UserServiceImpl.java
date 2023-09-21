@@ -100,7 +100,7 @@ public class UserServiceImpl implements UserServiceInterface {
             emailDetails.setSubject("Creation du personnel");
             emailDetails.setMsgBody(
                     "Informations de connexion: Eamil:" + user.getEmail() + " Password: " + pass);
-            // mailService.sendMail(emailDetails);
+         mailService.sendMail(emailDetails);
         }
         userRequest.setId(u.getId());
         return userRequest;
@@ -121,7 +121,7 @@ public class UserServiceImpl implements UserServiceInterface {
     public List<UserModel> findAll() {
         return userRepository.findAll().stream()
                 .filter(e -> e.isEnabled()).filter(e -> e.getAuthority().getAuthority().isBlank() == false)
-                .map(this::userToUserModel).sorted((x,y)-> y.getId().compareTo(x.getId())).collect(Collectors.toList());
+                .map(this::userToUserModel).sorted((x,y)-> x.getFirstname().compareTo(y.getFirstname())).collect(Collectors.toList());
     }
 
     @Override
@@ -191,8 +191,9 @@ public class UserServiceImpl implements UserServiceInterface {
          */
         if (user.isPresent()) {
             var pass = randonKey(10).toLowerCase();
-            user.get().setPassword(passwordEncoder.encode(pass));
-            userRepository.flush();
+            var user_=user.get();
+            user_.setPassword(passwordEncoder.encode(pass));
+            userRepository.saveAndFlush(user_);
             EmailDetails emailDetails = new EmailDetails();
             emailDetails.setRecipient(email);
             emailDetails.setSubject("Mot de passe retrouve");
