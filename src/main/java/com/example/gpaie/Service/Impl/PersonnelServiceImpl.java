@@ -21,6 +21,7 @@ import com.example.gpaie.Repository.RoleRepository;
 import com.example.gpaie.Repository.UserRepository;
 import com.example.gpaie.Service.MailService;
 import com.example.gpaie.Service.PersonnelService;
+import com.example.gpaie.Utils.StringUtil;
 @Service
 public class PersonnelServiceImpl implements PersonnelService{
     @Autowired
@@ -41,11 +42,13 @@ public class PersonnelServiceImpl implements PersonnelService{
     public PersonnelModel save(PersonnelModel personnelModel) {
         Personnel personnel;
         User user;
-        boolean sendMail=false;
+        boolean sendMail=false;  
+        var pass=StringUtil.randonKey(8);
         if(personnelModel.getId()== null){
             personnel=new Personnel();  
             user=new User();
-            user.setPassword(passwordEncoder.encode(personnelModel.getPassword()));
+          
+            user.setPassword(passwordEncoder.encode(pass));
             sendMail=true;
         }else{
             personnel=personnelRepository.findById(personnelModel.getId()).get();
@@ -72,7 +75,7 @@ public class PersonnelServiceImpl implements PersonnelService{
             EmailDetails emailDetails=new EmailDetails();
             emailDetails.setRecipient(personnel.getUser().getEmail());
             emailDetails.setSubject("Creation du personnel");
-            emailDetails.setMsgBody("Informations de connexion: Eamil:"+personnel.getUser().getEmail()+" Password: "+personnelModel.getPassword());
+            emailDetails.setMsgBody("Informations de connexion: Eamil:"+personnel.getUser().getEmail()+" Password: "+pass);
             mailService.sendMail(emailDetails);
         }
         return personnelModel;
